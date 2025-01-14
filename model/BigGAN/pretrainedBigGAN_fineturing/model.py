@@ -31,12 +31,14 @@ from .file_utils import cached_path
 
 logger = logging.getLogger(__name__)
 
+#.bin 파일로 모델의 파라미터(가중치 및 바이어스 값 등)가 포함
 PRETRAINED_MODEL_ARCHIVE_MAP = {
     'biggan-deep-128': "https://s3.amazonaws.com/models.huggingface.co/biggan/biggan-deep-128-pytorch_model.bin",
     'biggan-deep-256': "https://s3.amazonaws.com/models.huggingface.co/biggan/biggan-deep-256-pytorch_model.bin",
     'biggan-deep-512': "https://s3.amazonaws.com/models.huggingface.co/biggan/biggan-deep-512-pytorch_model.bin",
 }
 
+#.json 파일로 모델의 구조(layer 개수, class 개수 등)가 포함
 PRETRAINED_CONFIG_ARCHIVE_MAP = {
     'biggan-deep-128': "https://s3.amazonaws.com/models.huggingface.co/biggan/biggan-deep-128-config.json",
     'biggan-deep-256': "https://s3.amazonaws.com/models.huggingface.co/biggan/biggan-deep-256-config.json",
@@ -56,8 +58,9 @@ def snlinear(eps=1e-12, **kwargs):
 def sn_embedding(eps=1e-12, **kwargs):
     return nn.utils.spectral_norm(nn.Embedding(**kwargs), eps=eps)
 
+#self attention layer
 class SelfAttn(nn.Module):
-    """ Self attention Layer"""
+    
     def __init__(self, in_channels, eps=1e-12):
         super(SelfAttn, self).__init__()
         self.in_channels = in_channels
@@ -254,8 +257,8 @@ class Generator(nn.Module):
         z = self.tanh(z)
         return z
 
+#BigGAN Generator
 class BigGAN(nn.Module):
-    """BigGAN Generator."""
 
     @classmethod
     def from_pretrained(cls, pretrained_model_name_or_path, cache_dir=None, *inputs, **kwargs):
