@@ -1,7 +1,6 @@
 """
-Utilities for working with the local dataset cache.
-This file is adapted from the AllenNLP library at https://github.com/allenai/allennlp
-Copyright by the AllenNLP authors.
+AllenNLP 라이브러리의 코드에서 가져와 수정한 것으로, 로컬 데이터셋 캐시와 
+관련된 작업을 수행할 수 있는 유틸리티를 제공
 """
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 
