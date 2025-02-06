@@ -81,10 +81,8 @@ def filename_to_url(filename, cache_dir=None):
 
 def cached_path(url_or_filename, cache_dir=None):
     """
-    Given something that might be a URL (or might be a local path),
-    determine which. If it's a URL, download the file and cache it, and
-    return the path to the cached file. If it's already a local path,
-    make sure the file exists and then return the path.
+    URL이나 로컬 path를 주는 것을 정한다면, URL이라면 파일을 다운로드한 다음 캐시하고 
+    캐시 파일로부터 경로 반환함. 로컬 path라면 파일이 있는지 확인해야하고, 경로를 반환함.
     """
     if cache_dir is None:
         cache_dir = PYTORCH_PRETRAINED_BIGGAN_CACHE
@@ -110,13 +108,13 @@ def cached_path(url_or_filename, cache_dir=None):
 
 
 def split_s3_path(url):
-    """Split a full s3 path into the bucket name and path."""
+    """s3 경로에서 bucket 이름과 경로를 분리"""
     parsed = urlparse(url)
     if not parsed.netloc or not parsed.path:
         raise ValueError("bad s3 path {}".format(url))
     bucket_name = parsed.netloc
     s3_path = parsed.path
-    # Remove '/' at beginning of path.
+    # 경로의 시작부분 '/'을 제거
     if s3_path.startswith("/"):
         s3_path = s3_path[1:]
     return bucket_name, s3_path
@@ -124,8 +122,7 @@ def split_s3_path(url):
 
 def s3_request(func):
     """
-    Wrapper function for s3 requests in order to create more helpful error
-    messages.
+    s3요청의 에러 메시지에 더 도움이 되기 위해 만든 함수
     """
 
     @wraps(func)
@@ -143,7 +140,7 @@ def s3_request(func):
 
 @s3_request
 def s3_etag(url):
-    """Check ETag on S3 object."""
+    """s3 객체에서 ETag 확인할 것"""
     s3_resource = boto3.resource("s3")
     bucket_name, s3_path = split_s3_path(url)
     s3_object = s3_resource.Object(bucket_name, s3_path)
@@ -152,7 +149,7 @@ def s3_etag(url):
 
 @s3_request
 def s3_get(url, temp_file):
-    """Pull a file directly from S3."""
+    """s3에서 직접 파일을 가져옴"""
     s3_resource = boto3.resource("s3")
     bucket_name, s3_path = split_s3_path(url)
     s3_resource.Bucket(bucket_name).download_fileobj(s3_path, temp_file)
@@ -172,8 +169,8 @@ def http_get(url, temp_file):
 
 def get_from_cache(url, cache_dir=None):
     """
-    Given a URL, look for the corresponding dataset in the local cache.
-    If it's not there, download it. Then return the path to the cached file.
+    URL을 준다면, 로컬 캐시에서 상응하는 데이터셋을 찾음
+    만약 없다면 다운로드하고 캐시 파일 경로 리턴
     """
     if cache_dir is None:
         cache_dir = PYTORCH_PRETRAINED_BIGGAN_CACHE
@@ -183,9 +180,10 @@ def get_from_cache(url, cache_dir=None):
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
 
-    # Get eTag to add to filename, if it exists.
+    # eTag 있으면 파일이름에 추가
     if url.startswith("s3://"):
         etag = s3_etag(url)
+    # 없으면 HTTP 헤더를 확인하고, eTag를 추출
     else:
         response = requests.head(url, allow_redirects=True)
         if response.status_code != 200:
@@ -195,24 +193,25 @@ def get_from_cache(url, cache_dir=None):
 
     filename = url_to_filename(url, etag)
 
-    # get cache path to put the file
+    # 다운로드 할 파일을 저장할 캐시 경로를 가져옴
     cache_path = os.path.join(cache_dir, filename)
 
     if not os.path.exists(cache_path):
-        # Download to temporary file, then copy to cache dir once finished.
-        # Otherwise you get corrupt cache entries if the download gets interrupted.
+        # 캐시 디렉토리에 파일이 없는 경우 파일을 저장하여 임시 파일에 다운로드한 후, 캐시에 저장
+        # 임시 파일을 사용함으로 다운로드가 중간에 끊겨도 파일이 완전하지 않은 상태에서 캐시로 남음
         with tempfile.NamedTemporaryFile() as temp_file:
             logger.info("%s not found in cache, downloading to %s", url, temp_file.name)
 
-            # GET file object
+            # URL 종류에 따라 파일을 가져옴(get)
             if url.startswith("s3://"):
                 s3_get(url, temp_file)
             else:
                 http_get(url, temp_file)
 
-            # we are copying the file before closing it, so flush to avoid truncation
+            # 임시 파일 닫기 전 데이터 손실 부분이 없도록 함
             temp_file.flush()
-            # shutil.copyfileobj() starts at the current position, so go to the start
+            # shutil.copyfileobj()는 파일 복사를 시작할 때 현재 파일 포인터 위치에서 작업을 시작하므로
+            # 파일 포인터를 처음 위치로 이동
             temp_file.seek(0)
 
             logger.info("copying %s to cache at %s", temp_file.name, cache_path)
@@ -232,8 +231,8 @@ def get_from_cache(url, cache_dir=None):
 
 def read_set_from_file(filename):
     '''
-    Extract a de-duped collection (set) of text from a file.
-    Expected file format is one item per line.
+    파일에서 텍스트를 읽어 중복을 제거한 다음 집합 형태로 반환
+    파일의 각 줄은 하나의 항목으로 처리
     '''
     collection = set()
     with open(filename, 'r', encoding='utf-8') as file_:
