@@ -26,4 +26,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     path('', redirect_to_blog), #Root URL에 대해 Blog로 Redirect
+    path('accounts/', include('accounts.urls')),
 ]
