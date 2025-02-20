@@ -13,9 +13,9 @@ python
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-# username과 password를 원하는 값으로 설정
+- username과 password를 원하는 값으로 설정
 user = User.objects.create_user(username='testuser', password='testpassword')
-# 필요한 경우 이메일 등 다른 필드도 추가 가능
+- 필요한 경우 이메일 등 다른 필드도 추가 가능
 user.email = 'test@example.com'
 user.save()
 이렇게 하면 일반 유저 계정이 생성됩니다.
