@@ -1,5 +1,5 @@
 # tu_capstone_2025
-## -----------------------------------------------------------------------------
+
 # Django 쉘에서 User 객체 생성하기
 프로젝트 루트( manage.py 가 있는 위치)에서 shell을 실행한 뒤에, User 모델을 사용해 계정을 생성할 수 있습니다:
 
@@ -19,4 +19,4 @@ user = User.objects.create_user(username='testuser', password='testpassword')
 user.email = 'test@example.com'
 user.save()
 이렇게 하면 일반 유저 계정이 생성됩니다.
-## -----------------------------------------------------------------------------
+
