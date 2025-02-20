@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axiosInstance from '../components/axiosinstance'; // 파일 경로에 맞게 수정
+
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -8,10 +10,32 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // 실제 로그인 API 호출 로직 추가 (예: Django 백엔드와 통신)
-    console.log("로그인 시도:", email, password);
-    // 로그인 성공 시 홈으로 이동 (예시)
-    navigate("/");
+   
+    axiosInstance.post('/api/token/', {
+      // Django TokenObtainPairView는 기본적으로 'username'과 'password'를 기대합니다.
+      username: email, 
+       // 만약 이메일을 username으로 사용하신다면 그대로 사용
+      password: password,
+    })
+    
+    .then(response => {
+      const { access, refresh } = response.data;
+      // 토큰을 로컬 스토리지에 저장
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      // axiosInstance의 기본 헤더에 토큰을 추가 (인터셉터가 자동 적용되므로 선택적)
+      axiosInstance.defaults.headers['Authorization'] = `Bearer ${access}`;
+      // 로그인 성공 시 홈으로 이동
+      // 성공 시 콘솔에 토큰이 출력되는지 확인
+      console.log("access token:", access);
+      console.log("refresh token:", refresh);
+      navigate("/");
+    })
+
+    .catch(error => {
+      console.error("로그인 에러:", error);
+      alert("로그인에 실패하였습니다. 입력 정보를 확인해 주세요.");
+    });
   };
 
   return (
