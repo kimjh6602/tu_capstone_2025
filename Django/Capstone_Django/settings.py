@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 secret_file = os.path.join(BASE_DIR, 'secrets.json')
 
-with open(secret_file,encoding='utf-8') as f:
+with open(secret_file) as f:
     secrets = json.loads(f.read())
 
 def get_secret(setting):
