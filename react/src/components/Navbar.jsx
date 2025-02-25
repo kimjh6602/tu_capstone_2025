@@ -9,7 +9,7 @@ function Navbar() {
 
   const handleLogout = () => {
     const refreshToken = localStorage.getItem('refresh_token');
-    axiosInstance.post('/api/logout/', { refresh_token: refreshToken })
+    axiosInstance.post('/api/logout/', { refresh : refreshToken })
       .then(() => {
         logout(); // AuthContext의 logout 함수 호출
         navigate('/');

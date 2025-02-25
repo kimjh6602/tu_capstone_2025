@@ -17,14 +17,6 @@ class SignupSerializer(serializers.ModelSerializer):
             'email': {'required': True},
             'nickname': {'required': True},
         }
-    def validate_username(self,value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("중복된 username입니다.")
-        return value
-    def validate_email(self,value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("중복된 이메일입니다.")
-        return value
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
