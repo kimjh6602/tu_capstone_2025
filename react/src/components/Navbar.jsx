@@ -1,7 +1,26 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../components/axiosInstance';
+import { AuthContext } from '../contexts/AuthContext';
 
 function Navbar() {
+  const { isAuthenticated, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    const refreshToken = localStorage.getItem('refresh_token');
+    axiosInstance.post('/api/logout/', { refresh_token: refreshToken })
+      .then(() => {
+        logout(); // AuthContext의 logout 함수 호출
+        navigate('/');
+      })
+      .catch((error) => {
+        console.error('로그아웃 오류:', error);
+        logout();
+        navigate('/');
+      });
+  };
+
   return (
     <nav style={styles.nav}>
       <div style={styles.left}>
@@ -14,7 +33,17 @@ function Navbar() {
         </ul>
       </div>
       <div style={styles.right}>
-        <Link to="/login" style={styles.link}>로그인</Link>
+        {isAuthenticated ? (
+          <>
+            <Link to="/mypage" style={{ ...styles.link, marginRight: '15px' }}>마이페이지</Link>
+            <button onClick={handleLogout} style={styles.button}>로그아웃</button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" style={styles.link}>로그인</Link>
+            <Link to="/signup" style={{ ...styles.link, marginLeft: '15px' }}>회원가입</Link>
+          </>
+        )}
       </div>
     </nav>
   );
@@ -32,7 +61,9 @@ const styles = {
     flex: 1
   },
   right: {
-    flexShrink: 0
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center'
   },
   ul: {
     display: 'flex',
@@ -46,6 +77,13 @@ const styles = {
   link: {
     color: '#fff',
     textDecoration: 'none'
+  },
+  button: {
+    backgroundColor: '#fff',
+    color: '#333',
+    border: 'none',
+    padding: '5px 10px',
+    cursor: 'pointer'
   }
 };
 

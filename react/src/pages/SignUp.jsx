@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axiosInstance from '../components/axiosinstance';
+import axiosInstance from '../components/axiosInstance';
 
 function SignUp() {
-  // 추가된 필드: nickname
+  // 추가: 닉네임과 확인 비밀번호를 위한 상태 변수
   const [nickname, setNickname] = useState("");
-  const [email, setEmail] = useState(""); // 이메일을 username으로 사용
+  const [email, setEmail] = useState(""); // 이메일을 username으로도 사용
   const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState(""); // 이름을 password2로 변경
+  const [password2, setPassword2] = useState(""); // 변수명을 password2로 변경
 
   const navigate = useNavigate();
 
@@ -19,9 +19,9 @@ function SignUp() {
       return;
     }
 
-    // Django의 SignupSerializer가 요구하는 필드에 맞게 데이터 전송
+    // Django의 SignupSerializer가 요구하는 데이터 객체 구성
     axiosInstance.post('/accounts/api/signup/', {
-      username: email,    // username 자리에 이메일 사용 (혹은 별도의 username 입력이 필요하다면 별도 필드 추가)
+      username: email,    // username 자리에 이메일 사용 (만약 별도의 username 입력이 필요하면 추가)
       email: email,
       nickname: nickname,
       password: password,
@@ -33,8 +33,7 @@ function SignUp() {
       navigate("/login");
     })
     .catch(error => {
-      console.error("회원가입 에러:", error);
-      // 서버에서 받은 에러 메시지를 상세히 보여줄 수도 있음
+      console.error("회원가입 에러:", error.response?.data || error);
       alert("회원가입 중 오류가 발생했습니다. 입력 정보를 다시 확인해 주세요.");
     });
   };
@@ -43,6 +42,7 @@ function SignUp() {
     <div style={styles.container}>
       <h1>회원가입</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
+        {/* 닉네임 입력 필드 추가 */}
         <div style={styles.inputGroup}>
           <label htmlFor="nickname">닉네임</label>
           <input
@@ -58,7 +58,7 @@ function SignUp() {
           <label htmlFor="email">이메일</label>
           <input 
             type="email" 
-            id="email"
+            id="email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -69,7 +69,7 @@ function SignUp() {
           <label htmlFor="password">비밀번호</label>
           <input 
             type="password" 
-            id="password"
+            id="password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -80,7 +80,7 @@ function SignUp() {
           <label htmlFor="password2">비밀번호 확인</label>
           <input 
             type="password" 
-            id="password2"
+            id="password2" 
             value={password2}
             onChange={(e) => setPassword2(e.target.value)}
             required
