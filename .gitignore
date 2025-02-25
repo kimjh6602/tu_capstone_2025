@@ -9,8 +9,8 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media
 tu_capstone_2025_repo.txt
+media/
 secrets.json
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
