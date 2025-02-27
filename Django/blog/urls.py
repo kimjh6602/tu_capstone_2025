@@ -1,14 +1,29 @@
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
+from .views import PostViewSet, index
+from rest_framework.routers import DefaultRouter
+from django.http import JsonResponse
+
+router = DefaultRouter()
+router.register("posts", PostViewSet)
+
+
+def index(request):
+    return JsonResponse(
+        {"message": "Django API is running. Access data at /blog/api/posts/"}
+    )
+
 
 urlpatterns = [
-    path("", views.PostList.as_view(), name="index"),
+    # path("", views.PostList.as_view(), name="index"),
+    path("", index),
     path("<int:pk>/", views.PostDetail.as_view(), name="post_detail"),
     path("new/", views.PostCreate.as_view(), name="post_create"),
     path("<int:pk>/edit/", views.PostUpdate.as_view(), name="post_update"),
     path("<int:pk>/delete/", views.PostDelete.as_view(), name="post_delete"),
+    path("api/", include(router.urls)),
 ]
 
 if settings.DEBUG:

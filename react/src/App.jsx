@@ -8,6 +8,7 @@ import VirtualFitting from './pages/VirtualFitting';
 import Community from './pages/Community';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import BlogList from './pages/BlogList';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         <Route path="/clothing-generator" element={<ClothingGenerator />} />
         <Route path="/virtual-fitting" element={<VirtualFitting />} />
         <Route path="/catalog" element={<Catalog />} />
-        <Route path="/community" element={<Community />} />
+        <Route path="/community" element={<BlogList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
       </Routes>
