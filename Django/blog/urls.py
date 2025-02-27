@@ -9,15 +9,12 @@ from django.http import JsonResponse
 router = DefaultRouter()
 router.register("posts", PostViewSet)
 
-
 def index(request):
     return JsonResponse(
         {"message": "Django API is running. Access data at /blog/api/posts/"}
     )
 
-
 urlpatterns = [
-    # path("", views.PostList.as_view(), name="index"),
     path("", index),
     path("<int:pk>/", views.PostDetail.as_view(), name="post_detail"),
     path("new/", views.PostCreate.as_view(), name="post_create"),

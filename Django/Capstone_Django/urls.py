@@ -15,15 +15,13 @@ from rest_framework_simplejwt.views import (
 
 def serve_react_frontend(request):
     """React 빌드된 index.html을 Django에서 서빙"""
-    # react_build_path = os.path.join(settings.BASE_DIR, "react_build", "dist")
-    # index_file = os.path.join(react_build_path, "index.html")
+    react_build_path = os.path.join(settings.BASE_DIR, "react_build", "dist")
+    index_file = os.path.join(react_build_path, "index.html")
 
-    # if os.path.exists(index_file):
-    #     return render(
-    #         request, "react_build/dist/index.html"
-    #     )  # ✅ React 빌드된 HTML 서빙
-    # return JsonResponse({"error": "React build files not found"}, status=404)
-    return render(request, 'index.html')
+    if os.path.exists(index_file):
+        return render(request, index_file)  # ✅ React 빌드된 HTML 서빙
+    return JsonResponse({"error": "React build files not found"}, status=404)
+    # return render(request, 'index.html')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -37,3 +35,6 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        "/", document_root=os.path.join(settings.BASE_DIR, "react_build", "dist")
+    )

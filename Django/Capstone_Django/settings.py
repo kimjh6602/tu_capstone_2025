@@ -95,6 +95,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # ✅ React Vite 개발 서버
     # "https://myproductiondomain.com",  # 🔹 실제 배포 도메인 (추가 가능)
 ]
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:8000"]
 
 # ✅ Credentials(쿠키 인증) 필요 시
 CORS_ALLOW_CREDENTIALS = True
@@ -171,7 +173,7 @@ USE_TZ = False
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "react_build", "dist")]
-
+STATIC_ROOT = os.path.join(BASE_DIR, "static")  # collectstatic 시 파일이 모이는 경로
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
