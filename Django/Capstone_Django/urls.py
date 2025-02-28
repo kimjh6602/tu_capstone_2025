@@ -31,10 +31,11 @@ urlpatterns = [
     # JWT 기반 인증
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/logout/", TokenBlacklistView.as_view(), name="logout"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # ✅ 추가
+]
+# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(
-        "/", document_root=os.path.join(settings.BASE_DIR, "react_build", "dist")
-    )
+    # urlpatterns += static(
+    #     "/", document_root=os.path.join(settings.BASE_DIR, "react_build", "dist")
+    # )
