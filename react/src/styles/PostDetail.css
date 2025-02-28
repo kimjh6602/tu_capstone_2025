@@ -38,11 +38,25 @@
 .post-image {
   width: 100%;
   max-width: 600px;
-  height: 400px; /* 고정 크기 */
-  object-fit: cover; /* 비율 유지하면서 채우기 */
-  border-radius: 8px;
+  height: 400px;
+  object-fit: cover;
   display: block;
   margin: 20px auto;
+}
+
+.back-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 15px;
+  background-color: #ff5733;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background-color: #d93d1a;
 }
 
 .post-content {

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../components/axiosInstance";
 import "../styles/PostDetail.css";
 
 const PostDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +14,7 @@ const PostDetail = () => {
     axiosInstance
       .get(`/blog/api/posts/${id}/`)
       .then((res) => setPost(res.data))
-      .catch((error) => setError("게시글을 불러오는 데 실패했습니다."))
+      .catch(() => setError("게시글을 불러오는 데 실패했습니다."))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -25,14 +26,14 @@ const PostDetail = () => {
         <p>{error}</p>
       ) : (
         <div className="post-detail">
-          <h1 className="post-title">{post.title}</h1>
-          <div className="post-meta">
-            <p className="author">작성자: {post.author?.username || "알 수 없음"}</p>
-            <p>작성 시간: {new Date(post.created_at).toLocaleString()}</p>
-            <p>수정 시간: {new Date(post.updated_at).toLocaleString()}</p>
-          </div>
+          <h1>{post.title}</h1>
+          <p className="author">작성자: {post.author?.username || "알 수 없음"}</p>
+          <p>작성 시간: {new Date(post.created_at).toLocaleString()}</p>
+          <p>수정 시간: {new Date(post.updated_at).toLocaleString()}</p>
           {post.image && <img src={post.image} alt={post.title} className="post-image" />}
-          <p className="post-content">{post.content}</p>
+          <p>{post.content}</p>
+          {/* 수정: community로 이동 */}
+          <button className="back-btn" onClick={() => navigate("/community")}>목록으로 돌아가기</button>
         </div>
       )}
     </div>
@@ -41,13 +42,16 @@ const PostDetail = () => {
 
 export default PostDetail;
 
+
+
 // import { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
+// import { useParams, useNavigate } from "react-router-dom";
 // import axiosInstance from "../components/axiosInstance";
 // import "../styles/PostDetail.css";
 
 // const PostDetail = () => {
 //   const { id } = useParams();
+//   const navigate = useNavigate();
 //   const [post, setPost] = useState(null);
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState(null);
@@ -69,11 +73,12 @@ export default PostDetail;
 //       ) : (
 //         <div className="post-detail">
 //           <h1>{post.title}</h1>
-//           <p>작성자: {post.author}</p>
+//           <p className="author">작성자: {post.author?.username || "알 수 없음"}</p>
 //           <p>작성 시간: {new Date(post.created_at).toLocaleString()}</p>
 //           <p>수정 시간: {new Date(post.updated_at).toLocaleString()}</p>
-//           {post.image && <img src={post.image} alt={post.title} />}
+//           {post.image && <img src={post.image} alt={post.title} className="post-image" />}
 //           <p>{post.content}</p>
+//           <button className="back-btn" onClick={() => navigate("/")}>홈으로 돌아가기</button>
 //         </div>
 //       )}
 //     </div>
