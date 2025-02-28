@@ -7,7 +7,7 @@ from rest_framework.routers import DefaultRouter
 from django.http import JsonResponse
 
 router = DefaultRouter()
-router.register("posts", PostViewSet)
+router.register(r"posts", PostViewSet)
 
 def index(request):
     return JsonResponse(

@@ -1,94 +1,96 @@
 /* 전체 컨테이너 */
-.container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 20px;
+.blog-container {
+  max-width: 600px;
+  margin: auto;
   text-align: center;
 }
 
-/* 제목 스타일 */
-.title {
-  font-size: 2rem;
+/* ✅ 버튼 스타일 */
+.create-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
   margin-bottom: 20px;
-  color: #333;
 }
 
-/* 블로그 리스트 정렬 */
-.blog-list {
+.create-btn:hover {
+  background-color: #0056b3;
+}
+
+/* ✅ 글 작성 폼 스타일 */
+.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #f9f9f9;
+}
+
+.post-form input,
+.post-form textarea {
+  width: 100%;
+  padding: 10px;
+}
+
+.post-form button {
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.post-form button:hover {
+  background-color: #218838;
+}
+
+/* ✅ 게시글 목록 */
+.post-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* 블로그 카드 - ✅ 구분이 잘 되도록 스타일 개선 */
-.blog-card {
+/* ✅ 게시글 카드 (크기 통일) */
+.post-card {
+  width: 100%;
+  min-height: 300px; /* ✅ 카드 높이 고정 */
   background: white;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ✅ 그림자 효과 */
-  text-align: left;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border: 1px solid #ddd;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  max-width: 600px;
-  margin: 0 auto;
-  border: 1px solid #ddd; /* ✅ 테두리 추가 */
-  transition: transform 0.2s ease-in-out;
+  justify-content: space-between;
 }
 
-.blog-card:hover {
-  transform: scale(1.02); /* ✅ 마우스 오버 시 살짝 확대 */
-}
-
-/* 이미지 크기 조정 (비율 유지 & 적절한 크기 설정) */
-.blog-image {
+/* ✅ 이미지 컨테이너 (크기 통일) */
+.image-container {
   width: 100%;
-  max-width: 500px;
-  height: auto;
-  object-fit: cover; /* ✅ 비율 유지 */
-  border-radius: 10px;
-  margin-bottom: 15px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eee;
 }
 
-/* 제목 스타일 */
-.blog-title {
-  font-size: 1.4rem;
-  margin: 10px 0;
-  color: #222;
-  text-align: center;
+/* ✅ 이미지 크기 고정 */
+.blog-image {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: cover;
 }
 
-/* 내용 스타일 */
-.blog-text {
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.5;
-  text-align: center;
-  padding: 0 10px;
-}
-
-/* 로딩 텍스트 */
-.loading {
-  font-size: 1.2rem;
-  color: #888;
-}
-
-/* 반응형 디자인 (모바일 화면에서 조정) */
-@media (max-width: 600px) {
-  .blog-card {
-    padding: 15px;
-  }
-
-  .blog-image {
-    max-width: 100%;
-    height: auto;
-  }
-
-  .blog-title {
-    font-size: 1.2rem;
-  }
-
-  .blog-text {
-    font-size: 0.9rem;
-  }
+/* ✅ 이미지 없는 경우 표시 */
+.placeholder-image {
+  font-size: 14px;
+  color: #666;
 }

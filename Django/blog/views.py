@@ -11,6 +11,8 @@ from .models import Post
 from .forms import PostForm, PostUpdateForm
 from .serializers import PostSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import viewsets
 from django.http import JsonResponse
 import os
@@ -73,7 +75,8 @@ class PostDelete(UserPassesTestMixin, DeleteView):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by("-created_at")
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_context(self):
         """Serializer에서 request 정보 전달"""

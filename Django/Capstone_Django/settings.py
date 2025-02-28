@@ -64,9 +64,15 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # 인증된 사용자만 접근 가능
+    ]
 }
 
 SIMPLE_JWT = {
@@ -88,13 +94,6 @@ MIDDLEWARE = [
 ]
 
 
-# Add 0227
-# ✅ 특정 도메인만 허용 (React 개발 서버 & 배포 서버)
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",  # ✅ React 개발 서버 (CRA)
-#     "http://localhost:5173",  # ✅ React Vite 개발 서버
-#     # "https://myproductiondomain.com",  # 🔹 실제 배포 도메인 (추가 가능)
-# ]
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:8000"]
 
@@ -175,7 +174,7 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "react_build", "dist"),
+    # os.path.join(BASE_DIR, "react_build", "dist"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 

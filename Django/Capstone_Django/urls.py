@@ -12,7 +12,6 @@ from rest_framework_simplejwt.views import (
     TokenBlacklistView,
 )
 
-
 def serve_react_frontend(request):
     """React 빌드된 index.html을 Django에서 서빙"""
     react_build_path = os.path.join(settings.BASE_DIR, "react_build", "dist")
@@ -27,12 +26,12 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("blog/", include("blog.urls")),
     path("accounts/", include("accounts.urls")),
-    # path("", serve_react_frontend),
-    path("", include('blog.urls')),
+    path("", include("blog.urls")),
+    path("blog/api/posts/", include("blog.urls")),
     # JWT 기반 인증
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/logout/", TokenBlacklistView.as_view(), name="logout"),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # ✅ 추가
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
