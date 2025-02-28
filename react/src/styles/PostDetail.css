@@ -1,0 +1,54 @@
+.post-detail-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.post-detail {
+  width: 80%;
+  max-width: 800px;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.post-meta {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.post-meta p {
+  margin: 5px 0;
+}
+
+.author {
+  font-weight: bold;
+  color: #333;
+}
+
+.post-image {
+  width: 100%;
+  max-width: 600px;
+  height: 400px; /* 고정 크기 */
+  object-fit: cover; /* 비율 유지하면서 채우기 */
+  border-radius: 8px;
+  display: block;
+  margin: 20px auto;
+}
+
+.post-content {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #444;
+  margin-top: 20px;
+  text-align: justify;
+}

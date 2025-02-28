@@ -9,6 +9,8 @@ import Community from './pages/Community';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import BlogList from './pages/BlogList';
+import PostDetail from "./pages/PostDetail";
+
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
         <Route path="/virtual-fitting" element={<VirtualFitting />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/community" element={<BlogList />} />
+        <Route path="/blog/:id" element={<PostDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
       </Routes>
