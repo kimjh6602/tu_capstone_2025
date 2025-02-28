@@ -15,8 +15,8 @@ from rest_framework import viewsets
 from django.http import JsonResponse
 import os
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.conf import settings
+from django.shortcuts import redirect
 
 class PostList(ListView):
     model = Post
@@ -75,36 +75,38 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def get_serializer_context(self):
+        """Serializer에서 request 정보 전달"""
+        return {"request": self.request}
 
 def index(request):
+    return render(request, "index.html")
+
+def serve_react_frontend(request):
+    """React 빌드된 index.html을 Django에서 서빙"""
     react_build_path = os.path.join(settings.BASE_DIR, "react_build", "dist")
     index_file = os.path.join(react_build_path, "index.html")
 
     if os.path.exists(index_file):
-        return render(
-            request, "index.html"
-        )  # ✅ Django가 템플릿 로더에서 찾을 수 있도록 변경
+        return render(request, "index.html")  # ✅ Django가 템플릿에서 찾도록 변경
     return JsonResponse({"error": "React build files not found"}, status=404)
 
+def api_root(request):
+    return redirect("http://localhost:5174/")  # React 개발 서버로 이동
 
-def serve_react_frontend(request):
-    react_index_path = os.path.join(
-        settings.BASE_DIR, "react_build", "dist", "index.html"
-    )
-
-    if os.path.exists(react_index_path):
-        with open(react_index_path, "r") as f:
-            return HttpResponse(f.read())
-    else:
-        return HttpResponse("React build file not found!", status=404)
-
-
-# def index(request):
-#     react_build_path = os.path.join(
-#         os.path.dirname(os.path.dirname(__file__)), "react_build", "dist"
-#     )
-#     index_file = os.path.join(react_build_path, "index.html")
-
-#     if os.path.exists(index_file):
-#         return render(request, "react_build/dist/index.html")
-#     return JsonResponse({"error": "React build files not found"}, status=404)
+def post_list(request):
+    posts = [
+        {
+            "id": 1,
+            "title": "First Post",
+            "content": "This is my first post!",
+            "image": None,
+        },
+        {
+            "id": 2,
+            "title": "Second Post",
+            "content": "This is another post!",
+            "image": None,
+        },
+    ]
+    return JsonResponse(posts, safe=False)

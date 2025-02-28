@@ -18,7 +18,7 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-secret_file = os.path.join(BASE_DIR, "secrets.json")
+secret_file = os.path.join(BASE_DIR, 'secrets.json')
 
 with open(secret_file) as f:
     secrets = json.loads(f.read())
@@ -90,11 +90,11 @@ MIDDLEWARE = [
 
 # Add 0227
 # ✅ 특정 도메인만 허용 (React 개발 서버 & 배포 서버)
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # ✅ React 개발 서버 (CRA)
-    "http://localhost:5173",  # ✅ React Vite 개발 서버
-    # "https://myproductiondomain.com",  # 🔹 실제 배포 도메인 (추가 가능)
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",  # ✅ React 개발 서버 (CRA)
+#     "http://localhost:5173",  # ✅ React Vite 개발 서버
+#     # "https://myproductiondomain.com",  # 🔹 실제 배포 도메인 (추가 가능)
+# ]
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:8000"]
 
@@ -171,13 +171,20 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "react_build", "dist")]
-STATIC_ROOT = os.path.join(BASE_DIR, "static")  # collectstatic 시 파일이 모이는 경로
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")  # collectstatic 시 파일이 모이는 경로
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "react_build", "dist"),
+]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# if not DEBUG:
+#     from django.core.wsgi import get_wsgi_application
+#     application = get_wsgi_application()
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

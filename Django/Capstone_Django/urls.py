@@ -27,7 +27,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("blog/", include("blog.urls")),
     path("accounts/", include("accounts.urls")),
-    path("", serve_react_frontend),
+    # path("", serve_react_frontend),
+    path("", include('blog.urls')),
     # JWT 기반 인증
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/logout/", TokenBlacklistView.as_view(), name="logout"),

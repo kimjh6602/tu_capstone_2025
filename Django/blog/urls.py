@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .views import PostViewSet, index
+from .views import PostViewSet, index, post_list, api_root
 from rest_framework.routers import DefaultRouter
 from django.http import JsonResponse
 
@@ -15,12 +15,14 @@ def index(request):
     )
 
 urlpatterns = [
-    path("", index),
+    # path("", index, name="home"),
+    path("", api_root, name="api_root"),
     path("<int:pk>/", views.PostDetail.as_view(), name="post_detail"),
     path("new/", views.PostCreate.as_view(), name="post_create"),
     path("<int:pk>/edit/", views.PostUpdate.as_view(), name="post_update"),
     path("<int:pk>/delete/", views.PostDelete.as_view(), name="post_delete"),
     path("api/", include(router.urls)),
+    path("api/posts/", post_list, name="post_list"),
 ]
 
 if settings.DEBUG:
