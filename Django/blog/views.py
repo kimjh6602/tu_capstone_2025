@@ -72,11 +72,14 @@ class PostDelete(UserPassesTestMixin, DeleteView):
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    # queryset = Post.objects.all().order_by("-created_at")
-    queryset = Post.objects.select_related("author").order_by("-created_at")  # 작성자 정보 미리 로드
+    queryset = Post.objects.all().order_by("-created_at") 
+    # queryset = Post.objects.select_related("author").order_by("-created_at")  # 작성자 정보 미리 로드
     serializer_class = PostSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)  # 현재 로그인한 유저를 자동 저장
 
     def get_serializer_context(self):
         """Serializer에서 request 정보 전달"""
