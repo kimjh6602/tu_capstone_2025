@@ -8,6 +8,7 @@ import VirtualFitting from './pages/VirtualFitting';
 import Community from './pages/Community';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import CreatePalette from "./pages/CreatePalette.jsx";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/catalog/create" element={<CreatePalette />} />/
       </Routes>
     </div>
   );

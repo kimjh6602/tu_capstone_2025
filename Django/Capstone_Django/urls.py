@@ -18,6 +18,7 @@ urlpatterns = [
     path('blog/', include('blog.urls')),
     path('', redirect_to_blog),  # Root URL -> /blog/
     path('accounts/', include('accounts.urls')),
+    path('palette/', include('palette.urls')),
 
     # JWT 기반 인증
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
