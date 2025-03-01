@@ -75,9 +75,11 @@ const BlogList = () => {
           posts.map((post) => (
             <div key={post.id} className="post-card" onClick={() => navigate(`/post/${post.id}`)}>
               <h2>{post.title}</h2>
+              <p className="post-meta">
+                {post.author?.username || "알 수 없음"}   |   {new Date(post.created_at).toLocaleDateString()}
+              </p>
               {post.image && <img src={post.image} alt={post.title} className="blog-image" />}
               <p>{post.content}</p>
-              <p className="author">작성자: {post.author?.username || "알 수 없음"}</p>
             </div>
           ))
         ) : (

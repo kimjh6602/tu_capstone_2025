@@ -1,11 +1,9 @@
-/* 전체 컨테이너 */
 .blog-container {
   max-width: 600px;
   margin: auto;
   text-align: center;
 }
 
-/* ✅ 버튼 스타일 */
 .create-btn {
   background-color: #007bff;
   color: white;
@@ -20,7 +18,6 @@
   background-color: #0056b3;
 }
 
-/* ✅ 글 작성 폼 스타일 */
 .post-form {
   display: flex;
   flex-direction: column;
@@ -31,38 +28,17 @@
   background: #f9f9f9;
 }
 
-.post-form input,
-.post-form textarea {
-  width: 100%;
-  padding: 10px;
-}
-
-.post-form button {
-  padding: 10px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.post-form button:hover {
-  background-color: #218838;
-}
-
-/* ✅ 게시글 목록 */
 .post-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  white-space: pre-wrap; /* 공백 & 줄바꿈 유지 */
-  word-wrap: break-word; /* 긴 단어 줄바꿈 */
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
-/* ✅ 게시글 카드 (크기 통일) */
 .post-card {
   width: 100%;
-  min-height: 300px; /* ✅ 카드 높이 고정 */
+  min-height: 300px;
   background: white;
   border-radius: 12px;
   padding: 20px;
@@ -72,29 +48,31 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
 }
 
-/* ✅ 이미지 컨테이너 (크기 통일) */
-.image-container {
+.post-card:hover {
+  transform: translateY(-5px);
+}
+
+.post-card h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.post-meta {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.blog-image {
   width: 100%;
   height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #eee;
-}
-
-/* ✅ 이미지 크기 고정 */
-.blog-image {
-  max-width: 100%;
-  max-height: 200px;
   object-fit: cover;
-}
-
-/* ✅ 이미지 없는 경우 표시 */
-.placeholder-image {
-  font-size: 14px;
-  color: #666;
+  border-radius: 8px;
 }
 
 .styled-input, .styled-textarea, .styled-file {
