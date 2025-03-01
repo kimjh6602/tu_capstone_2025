@@ -42,9 +42,11 @@
 }
 
 /* 이미지 스타일 */
-.post-image {
+.post-image,
+.preview-image {
   width: 100%;
-  max-height: 700px;
+  max-width: 700px;
+  height: auto;
   object-fit: contain;
   border-radius: 12px;
   display: block;
@@ -58,42 +60,48 @@
   color: #444;
   text-align: left;
   margin-bottom: 60px;
+  white-space: pre-wrap; /* 공백 & 줄바꿈 유지 */
+  word-wrap: break-word; /* 긴 단어 줄바꿈 */
 }
 
 /* 버튼 컨테이너 */
 .btn-container {
   display: flex;
   justify-content: center;
-  gap: 50px; /* 버튼 간격 */
+  gap: 50px;
   margin-top: 80px;
 }
 
 /* 버튼 공통 스타일 */
-.detail-btn {
+.detail-btn,
+.save-btn,
+.cancel-btn {
   flex: 1;
   width: 100%;
-  max-width: 500px; /* 버튼 최대 크기 */
-  height: 120px; /* 버튼 높이 증가 */
-  font-size: 40px; /* 글자 크기 증가 */
+  max-width: 500px;
+  height: 120px;
+  font-size: 40px;
   font-weight: bold;
-  border: none; /* 테두리 제거 */
-  border-radius: 60px; /* 완전히 둥근 버튼 */
+  border: none;
+  border-radius: 60px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12); /* 부드러운 그림자 */
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* 버튼 색상 (미니멀한 인스타그램 스타일) */
-.edit-btn {
+/* 버튼 색상 */
+.edit-btn,
+.save-btn {
   background-color: #0095f6; /* 인스타그램 블루 */
   color: white;
 }
 
-.edit-btn:hover {
+.edit-btn:hover,
+.save-btn:hover {
   background-color: #007acc;
 }
 
@@ -106,12 +114,14 @@
   background-color: #d83442;
 }
 
-.back-btn {
+.back-btn,
+.cancel-btn {
   background-color: #e0e0e0; /* 라이트 그레이 */
   color: black;
 }
 
-.back-btn:hover {
+.back-btn:hover,
+.cancel-btn:hover {
   background-color: #bdbdbd;
 }
 
@@ -138,38 +148,31 @@
   resize: none;
 }
 
-/* 저장 & 취소 버튼 (수정 페이지 버튼도 통일) */
-.save-btn, .cancel-btn {
-  width: 100%;
-  max-width: 500px;
-  height: 120px;
-  font-size: 40px;
-  font-weight: bold;
-  border-radius: 60px;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
+/* 파일 업로드 컨테이너 */
+.file-upload-container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-transform: uppercase;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  gap: 10px;
 }
 
-.save-btn {
-  background-color: #0095f6;
+/* 파일 업로드 라벨 */
+.edit-file-label {
+  display: inline-block;
+  background-color: #007bff;
   color: white;
+  padding: 12px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
 }
 
-.save-btn:hover {
-  background-color: #007acc;
+/* 숨김 파일 입력 */
+.edit-file {
+  display: none;
 }
 
-.cancel-btn {
-  background-color: #6c757d;
-  color: white;
-}
-
-.cancel-btn:hover {
-  background-color: #5a6268;
+/* 선택된 파일명 표시 */
+.selected-file-name {
+  font-size: 16px;
+  color: #333;
 }

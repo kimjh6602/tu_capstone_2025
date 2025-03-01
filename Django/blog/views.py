@@ -30,7 +30,7 @@ class PostList(ListView):
 class PostDetail(DetailView):
     model = Post
     template_name = "blog/single_post_page.html"
-
+    context_object_name = "post"  # 추가
 
 class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
@@ -47,7 +47,6 @@ class PostCreate(LoginRequiredMixin, CreateView):
             "post_detail", kwargs={"pk": self.object.pk}
         )  # 생성된 글 상세 페이지로 이동
 
-
 class PostUpdate(UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostUpdateForm
@@ -62,7 +61,6 @@ class PostUpdate(UserPassesTestMixin, UpdateView):
             "post_detail", kwargs={"pk": self.object.pk}
         )  # 수정 후 해당 글로 이동
 
-
 class PostDelete(UserPassesTestMixin, DeleteView):
     model = Post
     template_name = "blog/post_confirm_delete.html"
@@ -74,7 +72,8 @@ class PostDelete(UserPassesTestMixin, DeleteView):
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all().order_by("-created_at")
+    # queryset = Post.objects.all().order_by("-created_at")
+    queryset = Post.objects.select_related("author").order_by("-created_at")  # 작성자 정보 미리 로드
     serializer_class = PostSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -82,7 +81,6 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         """Serializer에서 request 정보 전달"""
         return {"request": self.request}
-
 
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
