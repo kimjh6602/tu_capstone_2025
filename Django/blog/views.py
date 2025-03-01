@@ -20,6 +20,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import redirect
 
+
 class PostList(ListView):
     model = Post
     ordering = "-pk"
@@ -92,6 +93,7 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 def index(request):
     return render(request, "index.html")
 
+
 def serve_react_frontend(request):
     """React 빌드된 index.html을 Django에서 서빙"""
     react_build_path = os.path.join(settings.BASE_DIR, "react_build", "dist")
@@ -101,8 +103,10 @@ def serve_react_frontend(request):
         return render(request, "index.html")  # ✅ Django가 템플릿에서 찾도록 변경
     return JsonResponse({"error": "React build files not found"}, status=404)
 
+
 def api_root(request):
     return redirect("http://localhost:5174/")  # React 개발 서버로 이동
+
 
 def post_list(request):
     posts = [
