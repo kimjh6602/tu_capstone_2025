@@ -13,7 +13,7 @@ from .serializers import PostSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions, generics
 from django.http import JsonResponse
 import os
 from django.shortcuts import render
@@ -81,6 +81,13 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         """Serializer에서 request 정보 전달"""
         return {"request": self.request}
+
+
+class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
 
 def index(request):
     return render(request, "index.html")

@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .views import PostViewSet, index, post_list, api_root
+from .views import PostViewSet, post_list, api_root, PostDetailView
 from rest_framework.routers import DefaultRouter
 from django.http import JsonResponse
 
@@ -23,6 +23,9 @@ urlpatterns = [
     path("<int:pk>/delete/", views.PostDelete.as_view(), name="post_delete"),
     path("api/", include(router.urls)),
     path("api/posts/", post_list, name="post_list"),
+    path(
+        "api/posts/<int:pk>/", PostDetailView.as_view(), name="post-detail"
+    ),  # 게시글 상세, 수정, 삭제
 ]
 
 if settings.DEBUG:
