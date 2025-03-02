@@ -9,7 +9,7 @@ function Navbar() {
 
   const handleLogout = () => {
     const refreshToken = localStorage.getItem('refresh_token');
-    axiosInstance.post('/api/logout/', { refresh_token: refreshToken })
+    axiosInstance.post('/api/logout/', { refresh: refreshToken })
       .then(() => {
         logout(); // AuthContext의 logout 함수 호출
         navigate('/');
@@ -52,39 +52,45 @@ function Navbar() {
 const styles = {
   nav: {
     backgroundColor: '#333',
-    padding: '10px',
+    padding: '10px 20px', // 좌우 패딩을 늘려 여백 확보
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    position: 'fixed',
+    top: 0,
+    width: '100%',
+    zIndex: 1000,
   },
   left: {
-    flex: 1
+    flex: 1,
   },
   right: {
-    flexShrink: 0,
+    // flexShrink 제거 또는 필요에 따라 유지 가능
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingRight: '20px', // 오른쪽 영역에 추가 여백
   },
   ul: {
     display: 'flex',
     listStyle: 'none',
     margin: 0,
-    padding: 0
+    padding: 0,
   },
   li: {
-    marginRight: '15px'
+    marginRight: '15px',
   },
   link: {
     color: '#fff',
-    textDecoration: 'none'
+    textDecoration: 'none',
+    whiteSpace: 'nowrap', // 텍스트가 줄바꿈되지 않고 모두 표시되도록 함
   },
   button: {
     backgroundColor: '#fff',
     color: '#333',
     border: 'none',
     padding: '5px 10px',
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 };
 
 export default Navbar;

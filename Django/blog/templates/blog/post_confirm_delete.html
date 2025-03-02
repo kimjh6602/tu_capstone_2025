@@ -12,19 +12,3 @@
     </form>
 </div>
 {% endblock %}
-
-{% comment %} {% extends "base.html" %}
-
-{% block content %}
-    <div class="container mt-5">
-        <h2 class="text-danger">게시글 삭제</h2>
-        <p>정말로 "<strong>{{ object.title }}</strong>" 게시글을 삭제하시겠습니까?</p>
-
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">삭제</button>
-            <a href="{% url 'post_detail' object.pk %}" class="btn btn-secondary">취소</a>
-        </form>
-    </div>
-{% endblock %} {% endcomment %}
-

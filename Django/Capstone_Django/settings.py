@@ -11,18 +11,18 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os, json
-from pathlib import Path
 from datetime import timedelta
 from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 secret_file = os.path.join(BASE_DIR, 'secrets.json')
 
-with open(secret_file,encoding='utf-8') as f:
+with open(secret_file) as f:
     secrets = json.loads(f.read())
-    
+
 def get_secret(setting):
     #비밀 변수를 가져오거나 명시적 예외를 반환한다.
     try:
@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'blog',
     'accounts',
+    'palette',
     'corsheaders',
 ]
 
@@ -92,7 +93,8 @@ ROOT_URLCONF = 'Capstone_Django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        #BASE_DIR 형식에 맞춰 형식 변경
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -157,7 +159,11 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
