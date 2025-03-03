@@ -5,9 +5,31 @@ import { Link } from 'react-router-dom';
 const App = () => {
   const [palettes, setPalettes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('new'); // 기본 필터: new (최신순)
 
-  useEffect(() => {
-    axios.get('http://127.0.0.1:8000/palette/api/read/')
+  // 백엔드 API 호출 함수: 필터에 따라 쿼리 파라미터 전달 (예시)
+  const fetchPalettes = (filterValue) => {
+    setLoading(true);
+    let url = 'http://127.0.0.1:8000/palette/api/read/';
+    let params = {};
+    let token = localStorage.getItem('access_token');
+    if(filterValue === 'new'){
+      params.ordering = '-created';
+    } else if(filterValue === 'popular'){
+      params.ordering = '-like';
+    } else if(filterValue === 'mypalette'){
+      if(token) {
+        params.ordering = '-mypalette';
+      }
+    } else if(filterValue === 'collection'){
+      if(token) {
+        params.ordering = '-collection';
+      }
+    }
+    axios.get('http://127.0.0.1:8000/palette/api/read', { params : params ,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }})
       .then(response => {
         setPalettes(response.data);
         setLoading(false);
@@ -16,7 +38,12 @@ const App = () => {
         console.error('팔레트 데이터를 불러오는 중 에러 발생:', error);
         setLoading(false);
       });
-  }, []);
+  };
+
+  // 필터 상태가 바뀔 때마다 데이터 새로 불러오기
+  useEffect(() => {
+    fetchPalettes(filter);
+  }, [filter]);
 
   return (
     <div>
@@ -64,6 +91,9 @@ const App = () => {
           border-radius: 4px;
           cursor: pointer;
           width: 100%;
+        }
+        .sidebar button.active {
+          background-color: #BBBBBB;
         }
         .sidebar button.add-button {
           margin-top: 1rem;
@@ -122,7 +152,7 @@ const App = () => {
           white-space: nowrap;
           z-index: 1;
         }
-        /* 카드 푸터 영역 내부에 좋아요 버튼과 업로드 날짜 표시 */
+        /* 카드 푸터 영역 */
         .palette-footer {
           display: flex;
           justify-content: space-between;
@@ -164,10 +194,19 @@ const App = () => {
           <input type="text" placeholder="검색" />
         </div>
         <div className="buttons">
-          <button>My Palette</button>
-          <button>New</button>
-          <button>Popular</button>
-          <button>Collection</button>
+          {/* "New" 버튼을 최상단으로 배치 */}
+          <button className={filter === 'new' ? 'active' : ''} onClick={() => setFilter('new')}>
+            New
+          </button>
+          <button className={filter === 'mypalette' ? 'active' : ''} onClick={() => setFilter('mypalette')}>
+            My Palette
+          </button>
+          <button className={filter === 'popular' ? 'active' : ''} onClick={() => setFilter('popular')}>
+            Popular
+          </button>
+          <button className={filter === 'collection' ? 'active' : ''} onClick={() => setFilter('collection')}>
+            Collection
+          </button>
           <Link to="/catalog/create">
             <button className="add-button">Add</button>
           </Link>
@@ -193,7 +232,7 @@ const App = () => {
                       palette.color3,
                       palette.color4
                     ]}
-                    like={palette.like}
+                    like={palette.likes}
                     created={palette.created}
                   />
                 ))}
@@ -209,18 +248,26 @@ const App = () => {
 const PaletteWithFooter = ({ id, colors, like, created }) => {
   const [likeCount, setLikeCount] = useState(like);
 
-  // GET 요청: 최신 좋아요 수를 쿼리 파라미터로 전달
+  // GET 요청: 최신 좋아요 수를 쿼리 파라미터로 전달, id가 변경될 때마다 재요청
   useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/palette/api/like/`, { params: { id: id } })
+    axios.get('http://127.0.0.1:8000/palette/api/like/', { params: { id: id } })
       .then(response => {
+        console.log("Fetched like response:", response.data);
+        // 백엔드가 {"like": value} 형식으로 반환한다고 가정
         setLikeCount(response.data.like);
       })
       .catch(error => console.error("Error fetching like:", error));
   }, [id]);
 
   const handleLike = () => {
-    axios.patch(`http://127.0.0.1:8000/palette/api/like/`, { id: id })
+    const token = localStorage.getItem('access_token');
+    axios.patch(
+      'http://127.0.0.1:8000/palette/api/like/',
+      { id: id },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
          .then(response => {
+            console.log("Like updated response:", response.data);
             setLikeCount(response.data.like);
          })
          .catch(error => console.error("Error updating like:", error));
@@ -244,8 +291,8 @@ const PaletteWithFooter = ({ id, colors, like, created }) => {
         <button className="like-button" onClick={handleLike}>
           <img src="/heart-icon.png" alt="Like" />
         </button>
-          <span className="like-count">{likeCount}</span>
-          <span className="upload-date">{formattedDate}</span>
+        <span className="like-count">{likeCount}</span>
+        <span className="upload-date">{formattedDate}</span>
       </div>
     </div>
   );
