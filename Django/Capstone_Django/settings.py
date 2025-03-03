@@ -48,21 +48,6 @@ AUTH_USER_MODEL = "accounts.User"
 # Application definition
 
 INSTALLED_APPS = [
-<<<<<<< HEAD
-    "corsheaders",
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django_extensions",
-    "rest_framework",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
-    "blog",
-    "accounts",
-=======
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,7 +62,6 @@ INSTALLED_APPS = [
     'accounts',
     'palette',
     'corsheaders',
->>>>>>> 19f101fcf1fc7b0236206df82c2d2981078f1c54
 ]
 
 REST_FRAMEWORK = {
