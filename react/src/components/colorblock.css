@@ -1,0 +1,26 @@
+.color-block {
+  flex: 1; /* 컨테이너 안에서 균등 분할 */
+  min-width: 80px;
+  min-height: 80px;
+  position: relative;
+  /* margin 없이 붙어 있도록 설정 */
+  border: 1px solid #fff;  /* 원하는 경우 경계선을 추가해 구분 */
+  cursor: pointer;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  text-align: center;
+  padding: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.color-block:hover .overlay {
+  opacity: 1;
+}

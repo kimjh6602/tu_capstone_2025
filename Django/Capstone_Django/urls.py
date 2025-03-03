@@ -22,11 +22,20 @@ def serve_react_frontend(request):
     # return render(request, 'index.html')
 
 urlpatterns = [
+<<<<<<< HEAD
     path("admin/", admin.site.urls),
     path("blog/", include("blog.urls")),
     path("accounts/", include("accounts.urls")),
     path("", include("blog.urls")),
     path("blog/api/posts/", include("blog.urls")),
+=======
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),
+    path('', redirect_to_blog),  # Root URL -> /blog/
+    path('accounts/', include('accounts.urls')),
+    path('palette/', include('palette.urls')),
+
+>>>>>>> 19f101fcf1fc7b0236206df82c2d2981078f1c54
     # JWT 기반 인증
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/logout/", TokenBlacklistView.as_view(), name="logout"),
