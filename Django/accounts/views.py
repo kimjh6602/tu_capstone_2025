@@ -3,11 +3,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from .serializers import SignupSerializer
-from django.contrib.auth import get_user_model, authenticate
-from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
@@ -22,7 +20,7 @@ class CheckUsernameView(APIView):
             )
         exists = User.objects.filter(username=username).exists()
         return Response(
-            {"available": not exists},  # exists가 True면 사용중이므로 available은 False
+            {"available": not exists}, 
             status=status.HTTP_200_OK
         )
 

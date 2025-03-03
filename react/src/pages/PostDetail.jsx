@@ -12,7 +12,7 @@ const PostDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editPost, setEditPost] = useState({ title: "", content: "", image: null });
   const [previewImage, setPreviewImage] = useState(null);
-  const [fileName, setFileName] = useState(""); // 선택된 파일명 저장
+  const [fileName, setFileName] = useState("");
 
   useEffect(() => {
     axiosInstance
@@ -22,7 +22,7 @@ const PostDetail = () => {
         setEditPost({
           title: res.data.title,
           content: res.data.content,
-          image: null, // 기본값은 null
+          image: null,
         });
         setPreviewImage(res.data.image || null);
       })
@@ -39,7 +39,7 @@ const PostDetail = () => {
     const file = e.target.files[0];
     setEditPost((prev) => ({ ...prev, image: file }));
     setPreviewImage(file ? URL.createObjectURL(file) : null);
-    setFileName(file ? file.name : ""); // 선택된 파일명 설정
+    setFileName(file ? file.name : "");
   };
 
   const handleUpdate = async () => {
@@ -116,7 +116,6 @@ const PostDetail = () => {
             <>
               <h1 className="post-title">{post.title}</h1>
               <p className="post-meta">
-                {/* <span className="author">작성자: {post.author ? post.author.nickname : "알 수 없음"}</span> */}
                 <span className="author">작성자: {post.author ? post.author.username : "알 수 없음"}</span>
                 <br />
                 작성 시간: {new Date(post.created_at).toLocaleString()}

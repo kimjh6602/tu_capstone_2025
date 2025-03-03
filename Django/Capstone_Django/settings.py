@@ -25,7 +25,6 @@ with open(secret_file) as f:
 
 
 def get_secret(setting):
-    # 비밀 변수를 가져오거나 명시적 예외를 반환한다.
     try:
         return secrets[setting]
     except KeyError:
@@ -72,7 +71,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # 인증된 사용자만 접근 가능
+        'rest_framework.permissions.IsAuthenticated', 
     ]
 }
 
@@ -98,7 +97,6 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:8000"]
 
-# ✅ Credentials(쿠키 인증) 필요 시
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "Capstone_Django.urls"
@@ -171,11 +169,9 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")  # collectstatic 시 파일이 모이는 경로
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-    # os.path.join(BASE_DIR, "react_build", "dist"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 

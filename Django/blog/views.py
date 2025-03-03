@@ -30,7 +30,7 @@ class PostList(ListView):
 class PostDetail(DetailView):
     model = Post
     template_name = "blog/single_post_page.html"
-    context_object_name = "post"  # 추가
+    context_object_name = "post" 
 
 class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
@@ -38,7 +38,7 @@ class PostCreate(LoginRequiredMixin, CreateView):
     template_name = "blog/post_form.html"
 
     def form_valid(self, form):
-        form.instance.author = self.request.user  # 현재 로그인한 사용자를 작성자로 설정
+        form.instance.author = self.request.user  
         response = super().form_valid(form)
         return response
 
@@ -54,7 +54,7 @@ class PostUpdate(UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author  # 작성자만 수정 가능
+        return self.request.user == post.author 
 
     def get_success_url(self):
         return reverse_lazy(
@@ -73,7 +73,6 @@ class PostDelete(UserPassesTestMixin, DeleteView):
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by("-created_at") 
-    # queryset = Post.objects.select_related("author").order_by("-created_at")  # 작성자 정보 미리 로드
     serializer_class = PostSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]

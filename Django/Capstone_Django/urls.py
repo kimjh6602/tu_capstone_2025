@@ -17,29 +17,21 @@ def serve_react_frontend(request):
     index_file = os.path.join(react_build_path, "index.html")
 
     if os.path.exists(index_file):
-        return render(request, index_file)  # ✅ React 빌드된 HTML 서빙
+        return render(request, index_file) 
     return JsonResponse({"error": "React build files not found"}, status=404)
-    # return render(request, 'index.html')
 
 urlpatterns = [
-<<<<<<< HEAD
     path("admin/", admin.site.urls),
     path("blog/", include("blog.urls")),
     path("accounts/", include("accounts.urls")),
     path("", include("blog.urls")),
     path("blog/api/posts/", include("blog.urls")),
-=======
-    path('admin/', admin.site.urls),
-    path('blog/', include('blog.urls')),
-    path('', redirect_to_blog),  # Root URL -> /blog/
-    path('accounts/', include('accounts.urls')),
     path('palette/', include('palette.urls')),
 
->>>>>>> 19f101fcf1fc7b0236206df82c2d2981078f1c54
     # JWT 기반 인증
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/logout/", TokenBlacklistView.as_view(), name="logout"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # ✅ 추가
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
