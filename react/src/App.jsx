@@ -18,12 +18,10 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/" element={<BlogList />} /> */}
         <Route path="/clothing-generator" element={<ClothingGenerator />} />
         <Route path="/virtual-fitting" element={<VirtualFitting />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/community" element={<BlogList />} />
-        {/* <Route path="/blog/:id" element={<PostDetail />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/post/:id" element={<PostDetail />} />

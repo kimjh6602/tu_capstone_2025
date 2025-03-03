@@ -12,9 +12,13 @@ const axiosInstance = axios.create({
 // 요청 인터셉터: 요청을 보낼 때 access 토큰을 자동으로 포함
 axiosInstance.interceptors.request.use(
   (config) => {
+
+
+    //modified from Github
     const token = localStorage.getItem("access_token");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
+
     } else {
       console.warn("🚨 No access token found!");
     }

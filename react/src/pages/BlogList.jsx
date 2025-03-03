@@ -77,6 +77,7 @@ const BlogList = () => {
               <h2>{post.title}</h2>
               <p className="post-meta">
                 {post.author?.username || "알 수 없음"}   |   {new Date(post.created_at).toLocaleDateString()}
+                {/* {post.author?.nickname || "알 수 없음"}   |   {new Date(post.created_at).toLocaleDateString()} */}
               </p>
               {post.image && <img src={post.image} alt={post.title} className="blog-image" />}
               <p>{post.content}</p>

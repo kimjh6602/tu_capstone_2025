@@ -116,7 +116,7 @@ const PostDetail = () => {
             <>
               <h1 className="post-title">{post.title}</h1>
               <p className="post-meta">
-                {/* <span className="author">작성자: {post.author?.username || "알 수 없음"}</span> */}
+                {/* <span className="author">작성자: {post.author ? post.author.nickname : "알 수 없음"}</span> */}
                 <span className="author">작성자: {post.author ? post.author.username : "알 수 없음"}</span>
                 <br />
                 작성 시간: {new Date(post.created_at).toLocaleString()}
