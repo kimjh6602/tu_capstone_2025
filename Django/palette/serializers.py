@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Palette
+from .models import Palette,PaletteLike
 
 class PaletteSerializer(serializers.ModelSerializer):
     colors = serializers.ListField(
@@ -22,4 +22,5 @@ class PaletteSerializer(serializers.ModelSerializer):
             color4=colors[3]
         )
         palette.save()
+
         return palette
