@@ -8,7 +8,10 @@ from torch import nn
 from torch.nn import functional as F
 from torch.autograd import Function
 
-from op import FusedLeakyReLU, fused_leaky_relu, upfirdn2d
+import sys
+sys.path.append('ClothingGAN/models/stylegan2')
+
+from .op import FusedLeakyReLU, fused_leaky_relu, upfirdn2d
 
 
 class PixelNorm(nn.Module):
