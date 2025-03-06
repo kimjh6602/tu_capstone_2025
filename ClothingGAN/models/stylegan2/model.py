@@ -11,6 +11,7 @@ from torch.autograd import Function
 import sys
 sys.path.append('ClothingGAN/models/stylegan2')
 
+#상대 경로
 from .op import FusedLeakyReLU, fused_leaky_relu, upfirdn2d
 
 
