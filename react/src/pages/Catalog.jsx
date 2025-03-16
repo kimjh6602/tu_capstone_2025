@@ -26,7 +26,7 @@ const App = () => {
         params.ordering = '-collection';
       }
     }
-    axios.get('http://127.0.0.1:8000/palette/api/read', { params : params ,
+    axios.get('http://127.0.0.1:8000/palette/api/read/', { params : params ,
       headers: {
         Authorization: `Bearer ${token}`
       }})
