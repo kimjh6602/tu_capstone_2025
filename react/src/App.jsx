@@ -11,6 +11,8 @@ import BlogList from './pages/BlogList';
 import PostDetail from "./pages/PostDetail";
 
 import CreatePalette from "./pages/CreatePalette.jsx";
+import PaletteDetail from "./pages/PaletteDetail.jsx";
+import EditPalette from "./pages/EditPalette.jsx";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/post/:id" element={<PostDetail />} />
+        <Route path="/palette/:id" element={<PaletteDetail />} />
+        <Route path="/palette/edit/:id" element={<EditPalette />}/>
         <Route path="/catalog/create" element={<CreatePalette />} />/
       </Routes>
     </div>

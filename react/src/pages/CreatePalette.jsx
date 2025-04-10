@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../components/axiosInstance";
 
 const CreatePalette = () => {
+  const navigate = useNavigate();
   const [colors, setColors] = useState([
     "#BBBBBB",
     "#CCCCCC",
@@ -26,15 +27,10 @@ const CreatePalette = () => {
   };
 
  const handleCreate = () => {
-  const token = localStorage.getItem("access_token");  // 로컬스토리지에서 토큰 가져오기
-  axios.post('http://127.0.0.1:8000/palette/api/create/', { colors }, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-
+  axiosInstance.post('/palette/api/create/', { colors })
   .then(response => {
     console.log("Palette saved!", response.data);
+    navigate('/catalog/')
   })
   .catch(error => {
     console.error("Error saving palette:", error);

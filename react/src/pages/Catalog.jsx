@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from "react-router-dom";
+import axiosInstance from "../components/axiosInstance";
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const App = () => {
   const [palettes, setPalettes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('new'); // 기본 필터: new (최신순)
 
-  // 백엔드 API 호출 함수: 필터에 따라 쿼리 파라미터 전달 (예시)
+  // 백엔드 API 호출 함수: 필터에 따라 쿼리 파라미터 전달
   const fetchPalettes = (filterValue) => {
     setLoading(true);
-    let url = 'http://127.0.0.1:8000/palette/api/read/';
     let params = {};
-    let token = localStorage.getItem('access_token');
-    if(filterValue === 'new'){
+    const token = localStorage.getItem("access_token");
+    if (filterValue === 'new') {
       params.ordering = '-created';
-    } else if(filterValue === 'popular'){
+    } else if (filterValue === 'popular') {
       params.ordering = '-like';
-    } else if(filterValue === 'mypalette'){
-      if(token) {
+    } else if (filterValue === 'mypalette') {
+      if (token) {
         params.ordering = '-mypalette';
       }
-    } else if(filterValue === 'collection'){
-      if(token) {
+    } else if (filterValue === 'collection') {
+      if (token) {
         params.ordering = '-collection';
       }
     }
-    axios.get('http://127.0.0.1:8000/palette/api/read/', { params : params ,
-      headers: {
-        Authorization: `Bearer ${token}`
-      }})
+    axiosInstance.get('/palette/api/read/', { params })
       .then(response => {
         setPalettes(response.data);
         setLoading(false);
@@ -40,7 +40,7 @@ const App = () => {
       });
   };
 
-  // 필터 상태가 바뀔 때마다 데이터 새로 불러오기
+  // 필터 변경 시 데이터 재호출
   useEffect(() => {
     fetchPalettes(filter);
   }, [filter]);
@@ -123,6 +123,7 @@ const App = () => {
           margin: 0 auto;
           display: flex;
           flex-direction: column;
+          cursor: pointer;
         }
         .palette-card:hover {
           transform: scale(1.03);
@@ -155,9 +156,8 @@ const App = () => {
         /* 카드 푸터 영역 */
         .palette-footer {
           display: flex;
-          justify-content: space-between;
           align-items: center;
-          padding: 0.5rem;
+          padding: 0.5rem 0.2rem;
           background-color: #f2f2f2;
           border-bottom-left-radius: 8px;
           border-bottom-right-radius: 8px;
@@ -168,18 +168,15 @@ const App = () => {
           cursor: pointer;
           padding: 0;
         }
-        .like-button img {
-          width: 16px;
-          height: 16px;
+        .like-count {
+          font-size: 0.8rem;
+          color: #333;
+          margin-left: 0.1rem;
         }
         .upload-date {
           font-size: 0.8rem;
           color: #333;
-        }
-        .like-count {
-          font-size: 0.8rem;
-          color: #333;
-          margin-left: 0.3rem;
+          margin-left: auto;
         }
         .no-data {
           padding: 2rem;
@@ -194,7 +191,6 @@ const App = () => {
           <input type="text" placeholder="검색" />
         </div>
         <div className="buttons">
-          {/* "New" 버튼을 최상단으로 배치 */}
           <button className={filter === 'new' ? 'active' : ''} onClick={() => setFilter('new')}>
             New
           </button>
@@ -226,13 +222,9 @@ const App = () => {
                   <PaletteWithFooter
                     key={palette.id}
                     id={palette.id}
-                    colors={[
-                      palette.color1,
-                      palette.color2,
-                      palette.color3,
-                      palette.color4
-                    ]}
-                    like={palette.likes}
+                    colors={[palette.color1, palette.color2, palette.color3, palette.color4]}
+                    like={palette.like_count}
+                    liked={palette.liked}
                     created={palette.created}
                   />
                 ))}
@@ -245,38 +237,52 @@ const App = () => {
   );
 };
 
-const PaletteWithFooter = ({ id, colors, like, created }) => {
+const PaletteWithFooter = ({ id, colors, like, liked, created }) => {
+  const navigate = useNavigate();
   const [likeCount, setLikeCount] = useState(like);
+  const [localLiked, setLocalLiked] = useState(liked);
+  const [refresh, setRefresh] = useState(0);
 
-  // GET 요청: 최신 좋아요 수를 쿼리 파라미터로 전달, id가 변경될 때마다 재요청
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/palette/api/like/', { params: { id: id } })
+    axiosInstance
+      .get('/palette/api/like/', { params: { id: id } })
       .then(response => {
-        console.log("Fetched like response:", response.data);
-        // 백엔드가 {"like": value} 형식으로 반환한다고 가정
         setLikeCount(response.data.like);
       })
       .catch(error => console.error("Error fetching like:", error));
-  }, [id]);
+  }, [id, refresh]);
 
-  const handleLike = () => {
-    const token = localStorage.getItem('access_token');
-    axios.patch(
-      'http://127.0.0.1:8000/palette/api/like/',
-      { id: id },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-         .then(response => {
-            console.log("Like updated response:", response.data);
-            setLikeCount(response.data.like);
-         })
-         .catch(error => console.error("Error updating like:", error));
+  const handleLike = (e) => {
+    e.stopPropagation();
+    if (!localLiked) {
+      axiosInstance
+        .post('/palette/api/like/', { id: id })
+        .then(response => {
+          console.log("Like updated response:", response.data);
+          setLocalLiked(true);
+          setRefresh(prev => prev + 1);
+        })
+        .catch(error => console.error("Error updating like:", error));
+    } else {
+      axiosInstance
+        .delete('/palette/api/like/', { data: { id: id } })
+        .then(response => {
+          console.log("Like updated response:", response.data);
+          setLocalLiked(false);
+          setRefresh(prev => prev + 1);
+        })
+        .catch(error => console.error("Error deleting like:", error));
+    }
   };
 
-  const formattedDate = new Date(created).toLocaleDateString();
+  const handleCardClick = () => {
+    navigate(`/palette/${id}`);
+  };
+
+  const formattedDate = dayjs(created).fromNow();
 
   return (
-    <div className="palette-card">
+    <div className="palette-card" onClick={handleCardClick}>
       <div className="palette-colors">
         {colors.map((color, idx) => (
           <div
@@ -288,11 +294,19 @@ const PaletteWithFooter = ({ id, colors, like, created }) => {
         ))}
       </div>
       <div className="palette-footer">
-        <button className="like-button" onClick={handleLike}>
-          <img src="/heart-icon.png" alt="Like" />
-        </button>
-        <span className="like-count">{likeCount}</span>
-        <span className="upload-date">{formattedDate}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+          <button className="like-button" onClick={handleLike} style={{ padding: 0 }}>
+            {localLiked ? (
+              <i className="ri-heart-fill" style={{ color: 'black' }}></i>
+            ) : (
+              <i className="ri-heart-line"></i>
+            )}
+          </button>
+          <span className="like-count" style={{ fontSize: '0.8rem' }}>{likeCount}</span>
+        </div>
+        <span className="upload-date" style={{ fontSize: '0.8rem', marginLeft: 'auto' }}>
+          {formattedDate}
+        </span>
       </div>
     </div>
   );

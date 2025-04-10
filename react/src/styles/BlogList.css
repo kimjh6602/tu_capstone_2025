@@ -1,5 +1,6 @@
 .blog-container {
   max-width: 600px;
+  padding-top : 50px;
   margin: auto;
   text-align: center;
 }

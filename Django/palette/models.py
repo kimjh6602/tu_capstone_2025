@@ -8,6 +8,7 @@ class Palette(models.Model):
     color2 = models.CharField(max_length=7)
     color3 = models.CharField(max_length=7)
     color4 = models.CharField(max_length=7)
+    like_count = models.IntegerField(default=0)
     like = models.ManyToManyField(User,related_name='likes',through='PaletteLike')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

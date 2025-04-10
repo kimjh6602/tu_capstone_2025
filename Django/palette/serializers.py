@@ -8,7 +8,7 @@ class PaletteSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Palette
-        fields = ['id', 'user', 'colors', 'color1', 'color2', 'color3', 'color4']
+        fields = ['id', 'user', 'colors', 'color1', 'color2', 'color3', 'color4','like_count','created']
         read_only_fields = ['user', 'color1', 'color2', 'color3', 'color4']
 
     def create(self, validated_data):
@@ -19,8 +19,9 @@ class PaletteSerializer(serializers.ModelSerializer):
             color1=colors[0],
             color2=colors[1],
             color3=colors[2],
-            color4=colors[3]
+            color4=colors[3],
         )
         palette.save()
 
         return palette
+
