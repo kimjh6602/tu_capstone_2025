@@ -14,6 +14,8 @@ import os, json
 from datetime import timedelta
 from django.core.exceptions import ImproperlyConfigured
 
+os.environ['PGCLIENTENCODING'] = 'utf-8'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
