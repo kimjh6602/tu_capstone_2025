@@ -1,9 +1,21 @@
 from rest_framework import serializers
-from .models import Post
+from .models import Post, PostImage
+
+
+class PostImageSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PostImage
+        fields = ["id", "image_url"]
+
+    def get_image_url(self, obj):
+        return self.context["request"].build_absolute_uri(obj.image.url)
+
 
 class PostSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
-    author = serializers.SerializerMethodField()  # 작성자 정보 추가
+    images = PostImageSerializer(many=True, read_only=True)
+    author = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -11,20 +23,13 @@ class PostSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "content",
-            "image",
-            "image_url",
+            "images",
             "created_at",
             "updated_at",
             "author",
         ]
 
-    def get_image_url(self, obj):
-        if obj.image:
-            return self.context["request"].build_absolute_uri(obj.image.url)
-        return None
-
     def get_author(self, obj):
-        """작성자가 존재하면 username 반환, 없으면 None"""
         if obj.author:
             return {"id": obj.author.id, "username": obj.author.username}
         return None

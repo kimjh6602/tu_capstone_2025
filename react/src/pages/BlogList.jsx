@@ -5,7 +5,7 @@ import "../styles/BlogList.css";
 
 const BlogList = () => {
   const [posts, setPosts] = useState([]);
-  const [newPost, setNewPost] = useState({ title: "", content: "", image: null });
+  const [newPost, setNewPost] = useState({ title: "", content: "", images: [] });
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,7 +25,7 @@ const BlogList = () => {
   };
 
   const handleFileChange = (e) => {
-    setNewPost((prev) => ({ ...prev, image: e.target.files[0] }));
+    setNewPost((prev) => ({ ...prev, images: Array.from(e.target.files) }));
   };
 
   const handleSubmit = async (e) => {
@@ -33,16 +33,14 @@ const BlogList = () => {
     const formData = new FormData();
     formData.append("title", newPost.title);
     formData.append("content", newPost.content);
-    if (newPost.image) {
-      formData.append("image", newPost.image);
-    }
+    newPost.images.forEach((image) => formData.append("images", image));
 
     try {
       const res = await axiosInstance.post("/blog/api/posts/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setPosts([res.data, ...posts]);
-      setNewPost({ title: "", content: "", image: null });
+      setNewPost({ title: "", content: "", images: [] });
       setShowForm(false);
     } catch {
       setError("게시글을 작성하는 데 실패했습니다.");
@@ -61,7 +59,7 @@ const BlogList = () => {
         <form className="post-form" onSubmit={handleSubmit}>
           <input type="text" name="title" value={newPost.title} onChange={handleChange} placeholder="제목" required className="styled-input"/>
           <textarea name="content" value={newPost.content} onChange={handleChange} placeholder="내용" required className="styled-textarea"/>
-          <input type="file" name="image" onChange={handleFileChange} accept="image/*" className="styled-file"/>
+          <input type="file" name="images" onChange={handleFileChange} accept="image/*" multiple className="styled-file"/>
           <button type="submit" className="submit-btn">작성</button>
         </form>
       )}
@@ -78,7 +76,9 @@ const BlogList = () => {
               <p className="post-meta">
                 {post.author?.username || "알 수 없음"}   |   {new Date(post.created_at).toLocaleDateString()}
               </p>
-              {post.image && <img src={post.image} alt={post.title} className="blog-image" />}
+              {post.images && post.images.map((img) => (
+                <img key={img.id} src={img.image_url} alt="post-img" className="blog-image" />
+              ))}
               <p>{post.content}</p>
             </div>
           ))

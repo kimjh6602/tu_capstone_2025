@@ -7,7 +7,7 @@ from django.views.generic import (
     DeleteView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post
+from .models import Post, PostImage
 from .forms import PostForm, PostUpdateForm
 from .serializers import PostSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -70,18 +70,25 @@ class PostDelete(UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author  # 작성자만 삭제 가능
 
-
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all().order_by("-created_at") 
+    queryset = Post.objects.all().order_by("-created_at")
     serializer_class = PostSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)  # 현재 로그인한 유저를 자동 저장
+        post = serializer.save(author=self.request.user)
+        for image in self.request.FILES.getlist("images"):
+            PostImage.objects.create(post=post, image=image)
+
+    def perform_update(self, serializer):
+        post = serializer.save()
+        if self.request.FILES:
+            post.images.all().delete()  # 기존 이미지 제거
+            for image in self.request.FILES.getlist("images"):
+                PostImage.objects.create(post=post, image=image)
 
     def get_serializer_context(self):
-        """Serializer에서 request 정보 전달"""
         return {"request": self.request}
 
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):

@@ -10,7 +10,7 @@ const PostDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editPost, setEditPost] = useState({ title: "", content: "", image: null });
+  const [editPost, setEditPost] = useState({ title: "", content: "", images: [] });
   const [previewImage, setPreviewImage] = useState(null);
   const [fileName, setFileName] = useState("");
 
@@ -22,9 +22,11 @@ const PostDetail = () => {
         setEditPost({
           title: res.data.title,
           content: res.data.content,
-          image: null,
+          images: [],
         });
-        setPreviewImage(res.data.image || null);
+        if (res.data.images.length > 0) {
+          setPreviewImage(res.data.images[0].image_url);
+        }
       })
       .catch(() => setError("게시글을 불러오는 데 실패했습니다."))
       .finally(() => setLoading(false));
@@ -36,10 +38,10 @@ const PostDetail = () => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setEditPost((prev) => ({ ...prev, image: file }));
-    setPreviewImage(file ? URL.createObjectURL(file) : null);
-    setFileName(file ? file.name : "");
+    const files = Array.from(e.target.files);
+    setEditPost((prev) => ({ ...prev, images: files }));
+    setPreviewImage(URL.createObjectURL(files[0]));
+    setFileName(files[0].name);
   };
 
   const handleUpdate = async () => {
@@ -47,9 +49,7 @@ const PostDetail = () => {
       const formData = new FormData();
       formData.append("title", editPost.title);
       formData.append("content", editPost.content);
-      if (editPost.image) {
-        formData.append("image", editPost.image);
-      }
+      editPost.images.forEach((image) => formData.append("images", image));
 
       const response = await axiosInstance.put(`/blog/api/posts/${id}/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -97,13 +97,11 @@ const PostDetail = () => {
                 onChange={handleChange}
                 className="edit-textarea"
               />
-
-              {/* 기존 이미지가 있는 경우 표시 */}
               {previewImage && <img src={previewImage} alt="Preview" className="preview-image" />}
 
               <label className="edit-file-label">
                 이미지 선택
-                <input type="file" name="image" onChange={handleFileChange} accept="image/*" className="edit-file" />
+                <input type="file" name="images" onChange={handleFileChange} accept="image/*" multiple className="edit-file" />
               </label>
               {fileName && <p className="selected-file-name">{fileName}</p>}
 
@@ -123,7 +121,10 @@ const PostDetail = () => {
                 수정 시간: {new Date(post.updated_at).toLocaleString()}
               </p>
               
-              {post.image && <img src={post.image} alt={post.title} className="post-image" />}
+              {post.images && post.images.map((img) => (
+                <img key={img.id} src={img.image_url} alt="post" className="post-image" />
+              ))}
+
               <p className="post-content">{post.content}</p>
 
               <div className="btn-container">
