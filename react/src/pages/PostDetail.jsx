@@ -23,8 +23,8 @@ const PostDetail = () => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedCommentContent, setEditedCommentContent] = useState("");
   
-  const [likesCount, setLikesCount] = useState(post?.likes_count || 0);
-  const [isLiked, setIsLiked] = useState(post?.current_user_liked || false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -37,6 +37,8 @@ const PostDetail = () => {
       try {
         const postRes = await axiosInstance.get(`/blog/api/posts/${id}/`);
         setPost(postRes.data);
+        setLikesCount(postRes.data.likes_count); 
+        setIsLiked(postRes.data.current_user_liked); 
         setEditPost({
           title: postRes.data.title,
           content: postRes.data.content,
@@ -225,19 +227,29 @@ const PostDetail = () => {
 
               <p className="post-content">{post?.content}</p>
 
-              {isAuthor && (
-                <div className="btn-container">
-                  <button className="edit-btn" onClick={() => setIsEditing(true)}>수정</button>
-                  <button className="delete-btn" onClick={handleDelete}>삭제</button>
-                  <button className={`like-btn ${isLiked ? 'liked' : ''}`} onClick={handleLike} 
-                  >
+              <div className="btn-container">
+                <button 
+                  className={`like-btn ${isLiked ? 'liked' : ''}`}
+                  onClick={handleLike}
+                >
                   {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                   {likesCount}
                 </button>
+                <button className="back-btn" onClick={() => navigate("/community")}>
+                  홈으로
+                </button>
+              </div>
+
+              {isAuthor && (
+                <div className="btn-container author-btns">
+                  <button className="edit-btn" onClick={() => setIsEditing(true)}>
+                    수정
+                  </button>
+                  <button className="delete-btn" onClick={handleDelete}>
+                    삭제
+                  </button>
                 </div>
               )}
-
-              <button className="back-btn" onClick={() => navigate("/community")}>홈으로</button>
 
               {/* 댓글 */}
               <div className="comments-section">

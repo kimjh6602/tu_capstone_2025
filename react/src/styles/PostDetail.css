@@ -223,8 +223,12 @@
   background-color: #0056b3;
 }
 
+
+
+
+
 .like-btn {
-  width: 120px;
+  width: 140px;
   background-color: #f0f0f0;
   color: #262626;
   display: flex;
@@ -232,11 +236,14 @@
   justify-content: center;
   gap: 8px;
   transition: all 0.3s ease;
+  border: none;
+  border-radius: 10px;
+
 }
 
 .like-btn.liked {
-  background-color: #ff4d4f;
-  color: white;
+  background-color: #ff4d4f !important;
+  color: white !important;
 }
 
 .like-btn:hover {
