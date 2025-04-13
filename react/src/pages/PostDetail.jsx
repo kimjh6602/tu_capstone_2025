@@ -13,23 +13,33 @@ const PostDetail = () => {
   const [editPost, setEditPost] = useState({ title: "", content: "", images: [] });
   const [previewImage, setPreviewImage] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
-    axiosInstance
-      .get(`/blog/api/posts/${id}/`)
-      .then((res) => {
-        setPost(res.data);
+    const fetchPostAndComments = async () => {
+      try {
+        const postRes = await axiosInstance.get(`/blog/api/posts/${id}/`);
+        setPost(postRes.data);
         setEditPost({
-          title: res.data.title,
-          content: res.data.content,
+          title: postRes.data.title,
+          content: postRes.data.content,
           images: [],
         });
-        if (res.data.images.length > 0) {
-          setPreviewImage(res.data.images[0].image_url);
+        if (postRes.data.images.length > 0) {
+          setPreviewImage(postRes.data.images[0].image_url);
         }
-      })
-      .catch(() => setError("게시글을 불러오는 데 실패했습니다."))
-      .finally(() => setLoading(false));
+
+        const commentRes = await axiosInstance.get(`/blog/api/posts/${id}/comments/`);
+        setComments(commentRes.data);
+      } catch (err) {
+        setError("게시글을 불러오는 데 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPostAndComments();
   }, [id]);
 
   const handleChange = (e) => {
@@ -74,9 +84,22 @@ const PostDetail = () => {
     }
   };
 
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axiosInstance.post(`/blog/api/posts/${id}/comments/`, {
+        content: newComment,
+      });
+      setComments((prev) => [...prev, res.data]);
+      setNewComment("");
+    } catch (err) {
+      alert("댓글 작성에 실패했습니다.");
+    }
+  };
+
   return (
     <div className="post-detail-container">
-      {loading ? (
+      {loading || !post ? (
         <p className="loading-text">로딩 중...</p>
       ) : error ? (
         <p className="error-text">{error}</p>
@@ -97,11 +120,19 @@ const PostDetail = () => {
                 onChange={handleChange}
                 className="edit-textarea"
               />
-              {previewImage && <img src={previewImage} alt="Preview" className="preview-image" />}
-
+              {previewImage && (
+                <img src={previewImage} alt="Preview" className="preview-image" />
+              )}
               <label className="edit-file-label">
                 이미지 선택
-                <input type="file" name="images" onChange={handleFileChange} accept="image/*" multiple className="edit-file" />
+                <input
+                  type="file"
+                  name="images"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  multiple
+                  className="edit-file"
+                />
               </label>
               {fileName && <p className="selected-file-name">{fileName}</p>}
 
@@ -112,25 +143,51 @@ const PostDetail = () => {
             </div>
           ) : (
             <>
-              <h1 className="post-title">{post.title}</h1>
+              <h1 className="post-title">{post?.title}</h1>
               <p className="post-meta">
-                <span className="author">작성자: {post.author ? post.author.username : "알 수 없음"}</span>
+                <span className="author">
+                  작성자: {post?.author?.username ?? "알 수 없음"}
+                </span>
                 <br />
-                작성 시간: {new Date(post.created_at).toLocaleString()}
+                작성 시간: {new Date(post?.created_at).toLocaleString()}
                 <br />
-                수정 시간: {new Date(post.updated_at).toLocaleString()}
+                수정 시간: {new Date(post?.updated_at).toLocaleString()}
               </p>
-              
-              {post.images && post.images.map((img) => (
+
+              {post?.images?.map((img) => (
                 <img key={img.id} src={img.image_url} alt="post" className="post-image" />
               ))}
 
-              <p className="post-content">{post.content}</p>
+              <p className="post-content">{post?.content}</p>
 
               <div className="btn-container">
                 <button className="edit-btn" onClick={() => setIsEditing(true)}>수정</button>
                 <button className="delete-btn" onClick={handleDelete}>삭제</button>
                 <button className="back-btn" onClick={() => navigate("/community")}>홈으로</button>
+              </div>
+
+              {/* 댓글 */}
+              <div className="comments-section">
+                <h3>댓글</h3>
+                {comments.map((comment) => (
+                  <div key={comment.id} className="comment">
+                    <p>
+                      <strong>{comment.author?.username ?? "익명"}</strong> |{" "}
+                      {new Date(comment.created_at).toLocaleString()}
+                    </p>
+                    <p>{comment.content}</p>
+                  </div>
+                ))}
+
+                <form onSubmit={handleCommentSubmit} className="comment-form">
+                  <textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="댓글을 입력하세요"
+                    required
+                  />
+                  <button type="submit">댓글 작성</button>
+                </form>
               </div>
             </>
           )}

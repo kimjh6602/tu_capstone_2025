@@ -20,6 +20,8 @@ from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import redirect
 
+from .models import Comment
+from .serializers import CommentSerializer
 
 class PostList(ListView):
     model = Post
@@ -30,7 +32,8 @@ class PostList(ListView):
 class PostDetail(DetailView):
     model = Post
     template_name = "blog/single_post_page.html"
-    context_object_name = "post" 
+    context_object_name = "post"
+
 
 class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
@@ -38,7 +41,7 @@ class PostCreate(LoginRequiredMixin, CreateView):
     template_name = "blog/post_form.html"
 
     def form_valid(self, form):
-        form.instance.author = self.request.user  
+        form.instance.author = self.request.user
         response = super().form_valid(form)
         return response
 
@@ -47,6 +50,7 @@ class PostCreate(LoginRequiredMixin, CreateView):
             "post_detail", kwargs={"pk": self.object.pk}
         )  # 생성된 글 상세 페이지로 이동
 
+
 class PostUpdate(UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostUpdateForm
@@ -54,12 +58,13 @@ class PostUpdate(UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author 
+        return self.request.user == post.author
 
     def get_success_url(self):
         return reverse_lazy(
             "post_detail", kwargs={"pk": self.object.pk}
         )  # 수정 후 해당 글로 이동
+
 
 class PostDelete(UserPassesTestMixin, DeleteView):
     model = Post
@@ -69,6 +74,7 @@ class PostDelete(UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author  # 작성자만 삭제 가능
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by("-created_at")
@@ -90,6 +96,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {"request": self.request}
+
 
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
@@ -131,3 +138,31 @@ def post_list(request):
         },
     ]
     return JsonResponse(posts, safe=False)
+
+
+class CommentListCreateView(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return Comment.objects.filter(post_id=self.kwargs["post_id"]).order_by(
+            "created_at"
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user, post_id=self.kwargs["post_id"])
+
+
+class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_update(self, serializer):
+        comment = self.get_object()
+        if self.request.user == comment.author:
+            serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user == instance.author:
+            instance.delete()

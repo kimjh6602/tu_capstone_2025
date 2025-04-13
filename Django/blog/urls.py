@@ -6,6 +6,8 @@ from .views import PostViewSet, post_list, api_root, PostDetailView
 from rest_framework.routers import DefaultRouter
 from django.http import JsonResponse
 
+from .views import CommentListCreateView, CommentRetrieveUpdateDestroyView
+
 router = DefaultRouter()
 router.register(r"posts", PostViewSet)
 
@@ -26,6 +28,27 @@ urlpatterns = [
     path(
         "api/posts/<int:pk>/", PostDetailView.as_view(), name="post-detail"
     ),  # 게시글 상세, 수정, 삭제
+    path(
+        "api/posts/<int:post_id>/comments/",
+        CommentListCreateView.as_view(),
+        name="comment-list-create",
+    ),
+    path(
+        "api/comments/<int:pk>/",
+        CommentRetrieveUpdateDestroyView.as_view(),
+        name="comment-detail",
+    ),
+    ##
+    path(
+        "api/posts/<int:post_id>/comments/",
+        CommentListCreateView.as_view(),
+        name="comment-list-create",
+    ),
+    path(
+        "api/comments/<int:pk>/",
+        CommentRetrieveUpdateDestroyView.as_view(),
+        name="comment-detail",
+    ),
 ]
 
 if settings.DEBUG:
