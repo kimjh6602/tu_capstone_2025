@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../components/axiosInstance";
+import jwtDecode from "jwt-decode";
 import "../styles/PostDetail.css";
 
 const PostDetail = () => {
@@ -15,8 +16,15 @@ const PostDetail = () => {
   const [fileName, setFileName] = useState("");
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      setCurrentUser({ id: decoded.user_id, username: decoded.username });
+    }
+
     const fetchPostAndComments = async () => {
       try {
         const postRes = await axiosInstance.get(`/blog/api/posts/${id}/`);
@@ -187,7 +195,7 @@ const PostDetail = () => {
                       {new Date(comment.created_at).toLocaleString()}
                     </p>
                     <p>{comment.content}</p>
-                    {post?.author?.username === comment.author?.username && (
+                    {currentUser?.id === comment.author?.id && (
                       <button
                         className="comment-delete-btn"
                         onClick={() => handleCommentDelete(comment.id)}
