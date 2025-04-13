@@ -28,6 +28,8 @@ class PostSerializer(serializers.ModelSerializer):
     images = PostImageSerializer(many=True, read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
     author = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField() 
+    current_user_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -40,9 +42,20 @@ class PostSerializer(serializers.ModelSerializer):
             "updated_at",
             "author",
             "comments",
+            "likes_count",
+            "current_user_liked",
         ]
 
     def get_author(self, obj):
         if obj.author:
             return {"id": obj.author.id, "username": obj.author.username}
         return None
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()
+
+    def get_current_user_liked(self, obj):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return obj.likes.filter(id=request.user.id).exists()
+        return False

@@ -222,3 +222,28 @@
 .submit-comment-btn:hover {
   background-color: #0056b3;
 }
+
+.like-btn {
+  width: 120px;
+  background-color: #f0f0f0;
+  color: #262626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.like-btn.liked {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.like-btn:hover {
+  transform: scale(1.05);
+}
+
+.btn-container {
+  gap: 15px;
+  margin-top: 30px;
+}

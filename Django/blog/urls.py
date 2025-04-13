@@ -38,6 +38,11 @@ urlpatterns = [
         CommentRetrieveUpdateDestroyView.as_view(),
         name="comment-detail",
     ),
+    path(
+        "api/posts/<int:pk>/like/",
+        PostViewSet.as_view({"post": "like"}),
+        name="post-like",
+    ),
 ]
 
 if settings.DEBUG:

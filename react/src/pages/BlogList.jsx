@@ -75,6 +75,7 @@ const BlogList = () => {
               <h2>{post.title}</h2>
               <p className="post-meta">
                 {post.author?.username || "알 수 없음"}   |   {new Date(post.created_at).toLocaleDateString()}
+                <span> ❤️ {post.likes_count}</span> 
               </p>
               {post.images && post.images.map((img) => (
                 <img key={img.id} src={img.image_url} alt="post-img" className="blog-image" />

@@ -4,6 +4,9 @@ import axiosInstance from "../components/axiosInstance";
 import jwtDecode from "jwt-decode";
 import "../styles/PostDetail.css";
 
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
 const PostDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,6 +22,9 @@ const PostDetail = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedCommentContent, setEditedCommentContent] = useState("");
+  
+  const [likesCount, setLikesCount] = useState(post?.likes_count || 0);
+  const [isLiked, setIsLiked] = useState(post?.current_user_liked || false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -91,6 +97,16 @@ const PostDetail = () => {
       } catch (error) {
         alert("게시글 삭제에 실패했습니다.");
       }
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const response = await axiosInstance.post(`/blog/api/posts/${id}/like/`);
+      setLikesCount(response.data.count);
+      setIsLiked(response.data.status);
+    } catch (error) {
+      alert('좋아요 처리에 실패했습니다.');
     }
   };
 
@@ -186,6 +202,7 @@ const PostDetail = () => {
 
               <div className="btn-container">
                 <button className="save-btn" onClick={handleUpdate}>저장</button>
+                
                 <button className="cancel-btn" onClick={() => setIsEditing(false)}>취소</button>
               </div>
             </div>
@@ -212,8 +229,14 @@ const PostDetail = () => {
                 <div className="btn-container">
                   <button className="edit-btn" onClick={() => setIsEditing(true)}>수정</button>
                   <button className="delete-btn" onClick={handleDelete}>삭제</button>
+                  <button className={`like-btn ${isLiked ? 'liked' : ''}`} onClick={handleLike} 
+                  >
+                  {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  {likesCount}
+                </button>
                 </div>
               )}
+
               <button className="back-btn" onClick={() => navigate("/community")}>홈으로</button>
 
               {/* 댓글 */}

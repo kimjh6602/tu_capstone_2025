@@ -20,7 +20,10 @@ from rest_framework import viewsets, permissions, generics
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.db.models import Count
 import os
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 class IsOwnerOrReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -96,8 +99,25 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {"request": self.request}
 
+    @action(detail=True, methods=["post"])
+    def like(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+
+        if post.likes.filter(id=user.id).exists():
+            post.likes.remove(user)
+            status = False
+        else:
+            post.likes.add(user)
+            status = True
+
+        return Response({"status": status, "count": post.likes.count()}, status=200)
+
+
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().annotate(
+        likes_count = Count("likes")
+    )
     serializer_class = PostSerializer
     permission_classes = [IsOwnerOrReadOnly] 
 
