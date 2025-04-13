@@ -38,17 +38,6 @@ urlpatterns = [
         CommentRetrieveUpdateDestroyView.as_view(),
         name="comment-detail",
     ),
-    ##
-    path(
-        "api/posts/<int:post_id>/comments/",
-        CommentListCreateView.as_view(),
-        name="comment-list-create",
-    ),
-    path(
-        "api/comments/<int:pk>/",
-        CommentRetrieveUpdateDestroyView.as_view(),
-        name="comment-detail",
-    ),
 ]
 
 if settings.DEBUG:

@@ -97,6 +97,17 @@ const PostDetail = () => {
     }
   };
 
+  const handleCommentDelete = async (commentId) => {
+    if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
+
+    try {
+      await axiosInstance.delete(`/blog/api/comments/${commentId}/`);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+    } catch (err) {
+      alert("댓글 삭제에 실패했습니다.");
+    }
+  };
+
   return (
     <div className="post-detail-container">
       {loading || !post ? (
@@ -176,6 +187,14 @@ const PostDetail = () => {
                       {new Date(comment.created_at).toLocaleString()}
                     </p>
                     <p>{comment.content}</p>
+                    {post?.author?.username === comment.author?.username && (
+                      <button
+                        className="comment-delete-btn"
+                        onClick={() => handleCommentDelete(comment.id)}
+                      >
+                        삭제
+                      </button>
+                    )}
                   </div>
                 ))}
 
