@@ -7,21 +7,25 @@ from django.views.generic import (
     DeleteView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post, PostImage
+from .models import Post, PostImage, Comment
 from .forms import PostForm, PostUpdateForm
-from .serializers import PostSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.permissions import IsAuthenticated
+from .serializers import PostSerializer, CommentSerializer
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly,
+    IsAuthenticated,
+    BasePermission,
+)
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import viewsets, permissions, generics
 from django.http import JsonResponse
-import os
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.conf import settings
-from django.shortcuts import redirect
+import os
 
-from .models import Comment
-from .serializers import CommentSerializer
+class IsOwnerOrReadOnly(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.method in permissions.SAFE_METHODS or obj.author == request.user
+
 
 class PostList(ListView):
     model = Post
@@ -46,9 +50,7 @@ class PostCreate(LoginRequiredMixin, CreateView):
         return response
 
     def get_success_url(self):
-        return reverse_lazy(
-            "post_detail", kwargs={"pk": self.object.pk}
-        )  # 생성된 글 상세 페이지로 이동
+        return reverse_lazy("post_detail", kwargs={"pk": self.object.pk})
 
 
 class PostUpdate(UserPassesTestMixin, UpdateView):
@@ -61,26 +63,23 @@ class PostUpdate(UserPassesTestMixin, UpdateView):
         return self.request.user == post.author
 
     def get_success_url(self):
-        return reverse_lazy(
-            "post_detail", kwargs={"pk": self.object.pk}
-        )  # 수정 후 해당 글로 이동
+        return reverse_lazy("post_detail", kwargs={"pk": self.object.pk})
 
 
 class PostDelete(UserPassesTestMixin, DeleteView):
     model = Post
     template_name = "blog/post_confirm_delete.html"
-    success_url = reverse_lazy("index")  # 삭제 후 홈 화면으로 이동
+    success_url = reverse_lazy("index")
 
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author  # 작성자만 삭제 가능
-
+        return self.request.user == post.author
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by("-created_at")
     serializer_class = PostSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly] 
 
     def perform_create(self, serializer):
         post = serializer.save(author=self.request.user)
@@ -90,18 +89,17 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         post = serializer.save()
         if self.request.FILES:
-            post.images.all().delete()  # 기존 이미지 제거
+            post.images.all().delete()
             for image in self.request.FILES.getlist("images"):
                 PostImage.objects.create(post=post, image=image)
 
     def get_serializer_context(self):
         return {"request": self.request}
 
-
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly] 
 
 
 def index(request):
@@ -109,17 +107,16 @@ def index(request):
 
 
 def serve_react_frontend(request):
-    """React 빌드된 index.html을 Django에서 서빙"""
     react_build_path = os.path.join(settings.BASE_DIR, "react_build", "dist")
     index_file = os.path.join(react_build_path, "index.html")
 
     if os.path.exists(index_file):
-        return render(request, "index.html")  # ✅ Django가 템플릿에서 찾도록 변경
+        return render(request, "index.html")
     return JsonResponse({"error": "React build files not found"}, status=404)
 
 
 def api_root(request):
-    return redirect("http://localhost:5174/")  # React 개발 서버로 이동
+    return redirect("http://localhost:5174/")
 
 
 def post_list(request):
@@ -139,7 +136,6 @@ def post_list(request):
     ]
     return JsonResponse(posts, safe=False)
 
-
 class CommentListCreateView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -152,17 +148,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, post_id=self.kwargs["post_id"])
 
-
 class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def perform_update(self, serializer):
-        comment = self.get_object()
-        if self.request.user == comment.author:
-            serializer.save()
-
-    def perform_destroy(self, instance):
-        if self.request.user == instance.author:
-            instance.delete()
+    permission_classes = [IsOwnerOrReadOnly]

@@ -17,6 +17,8 @@ const PostDetail = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editedCommentContent, setEditedCommentContent] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -116,6 +118,33 @@ const PostDetail = () => {
     }
   };
 
+  const handleCommentEdit = (comment) => {
+    setEditingCommentId(comment.id);
+    setEditedCommentContent(comment.content);
+  };
+
+  const handleCommentUpdate = async (commentId) => {
+    try {
+      const res = await axiosInstance.put(`/blog/api/comments/${commentId}/`, {
+        content: editedCommentContent,
+      });
+      setComments((prev) =>
+        prev.map((c) => (c.id === commentId ? { ...c, content: res.data.content } : c))
+      );
+      setEditingCommentId(null);
+      setEditedCommentContent("");
+    } catch (err) {
+      alert("댓글 수정에 실패했습니다.");
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingCommentId(null);
+    setEditedCommentContent("");
+  };
+
+  const isAuthor = currentUser?.id === post?.author?.id;
+
   return (
     <div className="post-detail-container">
       {loading || !post ? (
@@ -179,11 +208,13 @@ const PostDetail = () => {
 
               <p className="post-content">{post?.content}</p>
 
-              <div className="btn-container">
-                <button className="edit-btn" onClick={() => setIsEditing(true)}>수정</button>
-                <button className="delete-btn" onClick={handleDelete}>삭제</button>
-                <button className="back-btn" onClick={() => navigate("/community")}>홈으로</button>
-              </div>
+              {isAuthor && (
+                <div className="btn-container">
+                  <button className="edit-btn" onClick={() => setIsEditing(true)}>수정</button>
+                  <button className="delete-btn" onClick={handleDelete}>삭제</button>
+                </div>
+              )}
+              <button className="back-btn" onClick={() => navigate("/community")}>홈으로</button>
 
               {/* 댓글 */}
               <div className="comments-section">
@@ -194,14 +225,28 @@ const PostDetail = () => {
                       <strong>{comment.author?.username ?? "익명"}</strong> |{" "}
                       {new Date(comment.created_at).toLocaleString()}
                     </p>
-                    <p>{comment.content}</p>
-                    {currentUser?.id === comment.author?.id && (
-                      <button
-                        className="comment-delete-btn"
-                        onClick={() => handleCommentDelete(comment.id)}
-                      >
-                        삭제
-                      </button>
+
+                    {editingCommentId === comment.id ? (
+                      <>
+                        <textarea
+                          value={editedCommentContent}
+                          onChange={(e) => setEditedCommentContent(e.target.value)}
+                          className="comment-edit-textarea"
+                        />
+                        <div className="comment-edit-btns">
+                          <button onClick={() => handleCommentUpdate(comment.id)}>저장</button>
+                          <button onClick={cancelEdit}>취소</button>
+                        </div>
+                      </>
+                    ) : (
+                      <p>{comment.content}</p>
+                    )}
+
+                    {currentUser?.id === comment.author?.id && editingCommentId !== comment.id && (
+                      <div className="comment-actions">
+                        <button onClick={() => handleCommentEdit(comment)}>수정</button>
+                        <button onClick={() => handleCommentDelete(comment.id)}>삭제</button>
+                      </div>
                     )}
                   </div>
                 ))}
