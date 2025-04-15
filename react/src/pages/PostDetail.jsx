@@ -104,7 +104,10 @@ const PostDetail = () => {
 
   const handleLike = async () => {
     try {
-      const response = await axiosInstance.post(`/blog/api/posts/${id}/like/`);
+      const response = await axiosInstance.post(`/blog/api/posts/${id}/like/`, 
+  {
+          user_id: currentUser?.id || 'guest',
+      });
       setLikesCount(response.data.count);
       setIsLiked(response.data.status);
     } catch (error) {
@@ -228,13 +231,15 @@ const PostDetail = () => {
               <p className="post-content">{post?.content}</p>
 
               <div className="btn-container">
-                <button 
-                  className={`like-btn ${isLiked ? 'liked' : ''}`}
-                  onClick={handleLike}
+                <button
+                  className={`like-btn${isLiked ? " liked" : ""}`}
+                  onClick={currentUser ? handleLike : () => alert("로그인이 필요합니다.")}
+                  //비회원에겐 좋아요 버튼 비활성화
+                  disabled={!currentUser}
                 >
                   {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                  {likesCount}
-                </button>
+                  <span style={{ marginLeft: 6 }}>{likesCount}</span>
+                </button>          
                 <button className="back-btn" onClick={() => navigate("/community")}>
                   홈으로
                 </button>

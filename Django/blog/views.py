@@ -99,7 +99,8 @@ class PostViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {"request": self.request}
 
-    @action(detail=True, methods=["post"])
+    # @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def like(self, request, pk=None):
         post = self.get_object()
         user = request.user
