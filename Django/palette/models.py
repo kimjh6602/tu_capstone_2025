@@ -21,4 +21,10 @@ class PaletteLike(models.Model):
     class Meta:
         unique_together = ('palette', 'user')
 
+class PaletteCollection(models.Model):
+    palette = models.ForeignKey(Palette, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('palette', 'user')
