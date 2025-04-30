@@ -26,7 +26,7 @@ function Navbar() {
       <div style={styles.left}>
         <ul style={styles.ul}>
           <li style={styles.li}><Link to="/" style={styles.link}>홈</Link></li>
-          <li style={styles.li}><Link to="/clothing-generator" style={styles.link}>의류 생성</Link></li>
+          <li style={styles.li}><Link to="/clothing-test" style={styles.link}>의류 생성</Link></li>
           <li style={styles.li}><Link to="/virtual-fitting" style={styles.link}>가상 피팅</Link></li>
           <li style={styles.li}><Link to="/catalog" style={styles.link}>카탈로그</Link></li>
           <li style={styles.li}><Link to="/community" style={styles.link}>커뮤니티</Link></li>
