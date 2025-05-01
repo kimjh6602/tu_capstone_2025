@@ -1,6 +1,8 @@
+@import url('https://webfontworld.github.io/t money/TmoneyRoundWind.css');
+
 .blog-container {
-  max-width: 600px;
-  padding-top : 50px;
+  max-width: 800px; 
+  padding-top: 120px;
   margin: auto;
   text-align: center;
 }
@@ -8,11 +10,14 @@
 .create-btn {
   background-color: #007bff;
   color: white;
-  padding: 10px 15px;
+  padding: 20px 30px;
+  font-size: large;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  margin-bottom: 50px;
+  font-family: 'TmoneyRoundWind';
+  font-weight: 600;
 }
 
 .create-btn:hover {
@@ -27,6 +32,7 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   background: #f9f9f9;
+  
 }
 
 .post-list {
@@ -51,6 +57,8 @@
   justify-content: space-between;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
+  font-family: 'TmoneyRoundWind';
+  font-weight: 500;
 }
 
 .post-card:hover {
@@ -71,10 +79,14 @@
 
 .blog-image {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
+  height: 300px;  
+  object-fit: contain;
+  background: #f4f4f4;
   border-radius: 8px;
+  margin: 10px 0;
+  display: block;
 }
+
 
 .styled-input, .styled-textarea, .styled-file {
   font-family: "Arial", sans-serif;
@@ -96,10 +108,25 @@
   color: white;
   padding: 10px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: large;
+  font-family: 'TmoneyRoundWind';
+  font-weight: 600;
 }
 
 .submit-btn:hover {
   background-color: #0056b3;
+}
+
+.truncate-multiline {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  max-height: 4.5em; 
+  line-height: 1.5em;
 }

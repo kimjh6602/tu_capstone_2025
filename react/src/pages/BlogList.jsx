@@ -49,8 +49,6 @@ const BlogList = () => {
 
   return (
     <div className="blog-container">
-      <h1 className="title">블로그</h1>
-
       <button className="create-btn" onClick={() => setShowForm(!showForm)}>
         {showForm ? "취소" : "새 글 작성하기"}
       </button>
@@ -77,10 +75,18 @@ const BlogList = () => {
                 {post.author?.username || "알 수 없음"}   |   {new Date(post.created_at).toLocaleDateString()}
                 <span> ❤️ {post.likes_count}</span> 
               </p>
-              {post.images && post.images.map((img) => (
-                <img key={img.id} src={img.image_url} alt="post-img" className="blog-image" />
-              ))}
+
+              {post.images && post.images.length > 0 && (
+                <img
+                className="blog-image"
+                src={post.images[0].image_url}
+                />
+              )}
+              <div className="truncate-multiline">
+              
+              
               <p>{post.content}</p>
+            </div>
             </div>
           ))
         ) : (
