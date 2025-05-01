@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import BlogList from './pages/BlogList';
 import PostDetail from "./pages/PostDetail";
+import GradioEmbed from "./pages/gradio.jsx";
 
 import CreatePalette from "./pages/CreatePalette.jsx";
 import PaletteDetail from "./pages/PaletteDetail.jsx";
@@ -20,6 +21,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/clothing-test" element={<GradioEmbed />} />
         <Route path="/clothing-generator" element={<ClothingGenerator />} />
         <Route path="/virtual-fitting" element={<VirtualFitting />} />
         <Route path="/catalog" element={<Catalog />} />
