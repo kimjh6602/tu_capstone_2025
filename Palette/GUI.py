@@ -38,7 +38,7 @@ class Window(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('Palette Based Photo Recoloring')
+        self.setWindowTitle('의류 색상 변경')
         self.UiComponents()
         self.show()
 
