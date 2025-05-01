@@ -197,6 +197,8 @@ class Window(QWidget):
         for text, slot in [('Auto', self.auto), ('Style Transfer', self.style_transfer)]:
             btn = QPushButton(text)
             btn.clicked.connect(slot)
+            if text in('Auto,' 'Style Transfer'):
+                btn.hide()
             auto_layout.addWidget(btn)
         self.main_layout.addLayout(auto_layout)
 
